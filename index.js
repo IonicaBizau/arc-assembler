@@ -18,14 +18,14 @@ Fs.readFile(INPUT_FILE, "utf-8", function (err, lines) {
 
     console.log("Compiling...");
     console.log("--------------------------");
-    for (var i in parsed.lines) {
+    parsed.lines.forEach(function (c, i) {
         var ins = Compile(parsed.lines[i], parsed);
 
         if (ins.length) {
-            console.log("> " + ins.match(/.{1,4}/g).join(" "));
+            console.log( i + 1 + "> " + ins.match(/.{1,4}/g).join(" "));
             outputStream.write(new Buffer([ins]));
         }
-    }
+    });
 
     outputStream.end();
 });
