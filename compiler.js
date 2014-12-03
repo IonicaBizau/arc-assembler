@@ -1,3 +1,4 @@
+var Util = require("./util");
 function compile(line, parsed) {
     var instruction = "";
 
@@ -131,6 +132,10 @@ function compile(line, parsed) {
         }
     }
 
+    if (line.label && line.label !== "main") {
+        // TODO This handles only integers
+        instruction = Util.pad(parseInt(line.c).toString(2));
+    }
 
     return instruction;
 }

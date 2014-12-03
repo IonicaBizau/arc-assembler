@@ -20,9 +20,8 @@ Fs.readFile(INPUT_FILE, "utf-8", function (err, lines) {
     console.log("--------------------------");
     parsed.lines.forEach(function (c, i) {
         var ins = Compile(parsed.lines[i], parsed);
-
         if (ins.length) {
-            console.log( i + 1 + "> " + ins.match(/.{1,4}/g).join(" "));
+            console.log(ins.match(/.{1,4}/g).join(" ") + " < " + (i + 1));
             outputStream.write(new Buffer([ins]));
         }
     });

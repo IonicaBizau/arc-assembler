@@ -48,7 +48,7 @@ var mnemonics = {
     }
 };
 
-const ALL_MNEMONICS = Object.keys(mnemonics).join("|");
+const ALL_MNEMONICS = "\\b(?:" + Object.keys(mnemonics).join("|") + ")\\b";
 
 function parse(lines) {
     var result = {
@@ -75,7 +75,7 @@ function parse(lines) {
 
         label = label || lastLabel;
 
-        if (new RegExp(ALL_MNEMONICS + " ").test(c)) {
+        if (new RegExp(ALL_MNEMONICS).test(c)) {
             var m = c.match(new RegExp("(" + ALL_MNEMONICS + ")( (.*))?")) || [];
             instruction = m[1];
             iArgs = (m[2] || "").split(/[ ,]+/).filter(function (c) { return c; });
