@@ -1,22 +1,28 @@
 function compile(line, parsed) {
     var instruction = "";
 
-    switch (line.instruction) {
-        // Memory
-        case "ld":
-            break;
-        case "st":
-            break;
-        // Arithmetic
-        case "addcc":
-            break;
+    if (line.instruction) {
+        switch (line.type) {
+            case "memory":
+                instruction += "11";
+                break;
+            case "arithmetic":
+                instruction += "10";
+                break;
+            case "sethi":
+                instruction += "00";
+                break;
+            case "branch":
+                instruction += "00";
+                break;
+            case "call":
+                instruction += "01";
+                break;
+        }
     }
 
     // Instruction: "ld"
     if (line.instruction === "ld") {
-
-        // Memory instruction
-        instruction += ("11");
 
         // ld [x], %r(1-31)
         // 11 00001 000000 00000 1 0100000010100
@@ -64,9 +70,6 @@ function compile(line, parsed) {
     // Instruction: "st"
     if (line.instruction === "st") {
 
-        // Memory instruction
-        instruction += ("11");
-
         // st %r(1-31) [...]
         // e.g. st %r1, [x]
         if (/^st \%r[0-9]+\,\ ?\[[a-z]+\]$/.test(line.c)) {
@@ -95,8 +98,6 @@ function compile(line, parsed) {
     }
 
     if (line.instruction === "jmpl") {
-        // Arithmetic instruction
-        instruction += ("10");
 
         if (/^jmpl \%r[0-9]+\+[0-9]+\,\ ?\%r[0-9]+$/.test(line.c)) {
             instruction += (("00000" + eval(line.iArgs[1].replace("%r", "")).toString(2)).slice(-5));
@@ -110,8 +111,6 @@ function compile(line, parsed) {
 
     // Instruction: "ld"
     if (line.instruction === "addcc") {
-        // Memory instruction
-        instruction += ("10");
 
         // addcc %r1, %r2, %r3
         if (/^addcc \%r[0-9]+,\ ?\%r[0-9],\ ?\%r[0-9]+$/.test(line.c.trim())) {
