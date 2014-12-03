@@ -1,55 +1,50 @@
 var mnemonics = {
     "ld": {
-        opcode: ""
+        type: "memory"
     }
   , "st": {
-        opcode: ""
+        type: "memory"
     }
   , "sethi": {
-        opcode: ""
+        type: "sethi"
     }
-  , "and": {
-        opcode: "000001"
-    }
-  , "andcc": {
-        opcode: "010001"
-    }
-  , "orcc": {
-        opcode: "010010"
-    }
-  , "orncc": {
-        opcode: "010110"
-    }
-  , "srl": {
-        opcode: "100110"
-    }
-  , "addcc": {
-        opcode: "010000"
-    }
-  , "call": {
-        opcode: ""
-    }
-  , "jmpl": {
-        opcode: "111000"
-    }
-  , "be": {
-        opcode: "0001"
-    }
-  , "bneg": {
-        opcode: "0110"
-    }
-  , "bcs": {
-        opcode: "0101"
-    }
-  , "bvs": {
-        opcode: "0111"
-    }
-  , "ba": {
-        opcode: "1000"
+  , "branch": {
+        type: "branch"
     }
 
-  , "halt": {
-        opcode: ""
+  , "be": {
+        type: "call"
+    }
+  , "bcs": {
+        type: "call"
+    }
+  , "bneg": {
+        type: "call"
+    }
+  , "bvs": {
+        type: "call"
+    }
+  , "ba": {
+        type: "call"
+    }
+
+  , "addcc": {
+        type: "arithmetic"
+    }
+  , "andcc": {
+        type: "arithmetic"
+    }
+  , "orcc": {
+        type: "arithmetic"
+    }
+  , "orncc": {
+        type: "arithmetic"
+    }
+  , "srl": {
+        type: "arithmetic"
+    }
+  , "jmpl": {
+        type: "arithmetic"
     }
 };
 
@@ -124,6 +119,13 @@ function parse(lines) {
         cLine.iArgs = iArgs;
         cLine.oArgs = oArgs;
         cLine.c = lValue;
+
+        if (instruction) {
+            if (!mnemonics[instruction]) {
+                throw new Error("Invalid instruction: " + instruction);
+            }
+            cLine.type = mnemonics[instruction].type
+        }
 
         if (result._cAddress === -1 && cLine.label === "main") {
             result._cAddress = result._sAddress;

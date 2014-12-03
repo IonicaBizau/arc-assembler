@@ -1,6 +1,17 @@
 function compile(line, parsed) {
     var instruction = "";
 
+    switch (line.instruction) {
+        // Memory
+        case "ld":
+            break;
+        case "st":
+            break;
+        // Arithmetic
+        case "addcc":
+            break;
+    }
+
     // Instruction: "ld"
     if (line.instruction === "ld") {
 
