@@ -3,7 +3,7 @@ var Fs = require("fs")
   , Compile = require("./compiler")
   ;
 
-const OUTPUT_FILE = "./out.arc"
+const OUTPUT_FILE = "./out"
     , INPUT_FILE = "./Test.asm"
     ;
 
@@ -22,7 +22,7 @@ Fs.readFile(INPUT_FILE, "utf-8", function (err, lines) {
         var ins = Compile(parsed.lines[i], parsed);
         if (ins.length) {
             console.log(ins.match(/.{1,4}/g).join(" ") + " < " + (i + 1));
-            outputStream.write(new Buffer([ins]));
+            outputStream.write(new Buffer(ins));
         }
     });
 
