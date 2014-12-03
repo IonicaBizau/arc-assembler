@@ -1,4 +1,4 @@
-var Util = require("./util");
+var Util = require("../util");
 function compile(line, parsed) {
     var instruction = "";
 
