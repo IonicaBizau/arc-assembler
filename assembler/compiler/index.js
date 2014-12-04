@@ -123,12 +123,13 @@ function compile(line, parsed) {
                 if (line.iArgs.length >= 2) {
 
                     var rd = getRd(line);
-                    if (Util.isLocAdd(getRd(line, true))) {
-                        rd = Util.pad("", 5);
-                    }
-
                     var rs1 = getRs1(line);
                     var rs2 = getRs2(line);
+
+                    if (Util.isLocAdd(getRd(line, true))) {
+                        rd = getRs1(line);
+                        rs1 = Util.pad("", 5);
+                    }
 
                     // rd
                     instruction += rd;
@@ -165,13 +166,12 @@ function compile(line, parsed) {
                 break;
 
             case "addcc":
-                debugger
                 if (line.iArgs.length === 3) {
 
                     var rd = getRd(line);
-                    if (Util.isLocAdd(getRd(line, true))) {
-                        rd = Util.pad("", 5);
-                    }
+                    // if (Util.isLocAdd(getRd(line, true))) {
+                    //     rd = Util.pad("", 5);
+                    // }
 
                     var rs1 = getRs1(line);
                     var rs2 = getRs2(line);
