@@ -13,7 +13,7 @@ $(document).ready(function () {
             output += c.code.match(/.{1,4}/g).join(" ") + " << Line " + c.line + "\n";
         });
         $("pre.machine-code").html(output);
-        $("pre.result").html(ArcInterpretor.interpret(result.mCode);
+        $("pre.result").html(ArcInterpretor.interpret(result.mCode));
     }
 
     var editor = ace.edit("editor");
