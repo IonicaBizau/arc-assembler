@@ -32,3 +32,8 @@ ArcAssembler.compile = function (lines) {
     });
     return result;
 };
+
+// Browser support
+if (typeof window === "object") {
+    window.ArcAssembler = ArcAssembler;
+}
