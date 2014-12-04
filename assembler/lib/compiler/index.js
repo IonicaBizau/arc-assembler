@@ -1,4 +1,4 @@
-var Util = require("../../util");
+var Util = require("../../../util");
 
 function compile(line, parsed) {
 
@@ -19,9 +19,12 @@ function compile(line, parsed) {
 
         // [x]
         if (Util.isLocAdd(r)) {
-            var loc = parsed.addresses[r.match(/^\[([a-z]+)\]$/)[1]];
+            var add = r.match(/^\[([a-z]+)\]$/)[1]
+              , loc = parsed.addresses[add]
+              ;
+
             if (!loc) {
-                throw new Error("Invalid memory location: " + memLoc);
+                throw new Error("Invalid memory location: " + add);
             }
             return Util.pad(loc.address.toString(2), length);
         }

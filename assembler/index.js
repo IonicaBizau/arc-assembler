@@ -1,6 +1,5 @@
 var Fs = require("fs")
-  , Parse = require("./parser")
-  , Compile = require("./compiler")
+  , ArcAssembler = require("./lib")
   ;
 
 const OUTPUT_FILE = "./out"
@@ -10,21 +9,12 @@ const OUTPUT_FILE = "./out"
 var outputStream = Fs.createWriteStream(OUTPUT_FILE);
 
 Fs.readFile(INPUT_FILE, "utf-8", function (err, lines) {
-    lines = lines.split("\n");
-    console.log(">> Parsing...");
-    console.log("--------------------------");
+    var result = ArcAssembler.compile(lines);
 
-    var parsed = Parse(lines);
-
-    console.log("Compiling...");
-    console.log("--------------------------");
-    parsed.lines.forEach(function (c, i) {
-        var ins = Compile(parsed.lines[i], parsed);
-        if (ins.length) {
-            console.log(ins.match(/.{1,4}/g).join(" ") + " < " + (i + 1));
-            outputStream.write(new Buffer(ins.split("").map(function (c) { return parseInt(c); })));
-        }
+    result.raw.forEach(function (c) {
+        console.log(c.code.match(/.{1,4}/g).join(" ") + " << Line " + c.line);
     });
 
+    outputStream.write(new Buffer(result.mCode));
     outputStream.end();
 });
