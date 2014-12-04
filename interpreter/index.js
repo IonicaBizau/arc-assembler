@@ -101,7 +101,7 @@ function interpret(cIns, buff) {
         return;
     }
 
-    console.log("> OP: " + Operators[op], op);
+    console.log("> OP: " + Operators[op]);
 
     switch(s(cIns, 0, 1)) {
         // SETHI/BRANCH
