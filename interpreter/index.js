@@ -51,9 +51,14 @@ function s(inp, s, e) {
     return c;
 }
 
-function getSimm13(buff, cIns) {
-    return s(buff.slice(((parseInt(s(cIns, 19, 31), 2) - 2048) / 4) * 32), 0, 31);
+function getLoc(buff, cIns) {
+    return (parseInt(s(cIns, 19, 31), 2) - 2048) / 4 - 1;
 }
+
+function getSimm13(buff, cIns) {
+    return s(buff.slice((getLoc(buff, cIns) + 1) * 32), 0, 31);
+}
+
 
 function rd(cIns) {
     return s(cIns, 2, 6);
@@ -78,8 +83,26 @@ function rv(r, b) {
     return r;
 }
 
+var ended = false;
 function interpret(cIns, buff) {
     var op = s(cIns, 7, 12);
+    if (ended) {
+        return;
+    }
+
+    if (Operators[op] === "jmpl") {
+        ended = true;
+    }
+
+    if (ended) {
+        console.log(">> Done.");
+        console.log("---- Registers:");
+        console.log(JSON.stringify(_r, null, 2));
+        return;
+    }
+
+    console.log("> OP: " + Operators[op], op);
+
     switch(s(cIns, 0, 1)) {
         // SETHI/BRANCH
         case "00":
@@ -98,16 +121,24 @@ function interpret(cIns, buff) {
             break;
         // MEMORY
         case "11":
+
             if (Operators[op] === "ld") {
                 Registers[rd(cIns)] = getSimm13(buff, cIns);
+            }
+
+            if (Operators[op] === "st") {
+                var loc = getLoc(buff, cIns) * 32;
+                var rdc = Registers[rd(cIns)];
+                console.log(">> Copying content from register " + rd(cIns) + " to memory location: " + loc);
+                for (var i = 0; i < 32; ++i) {
+                    buff[loc + i] = rdc[i];
+                }
             }
             break;
         default:
             throw new Error("Invalid instruction format.");
             break;
     }
-
-    console.log("> OP: " + Operators[op], op);
 }
 
 Fs.readFile(INPUT_FILE, function (err, buff) {
