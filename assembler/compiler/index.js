@@ -1,5 +1,72 @@
 var Util = require("../../util");
+
 function compile(line, parsed) {
+
+    function bR(r, length) {
+        length = length || 5;
+
+        // %r0+x
+        if (/^\%r[0-9]\+[a-z]+$/.test(r)) {
+            return Util.pad(Util.addBin(
+                bR(r.replace(/\+[a-z]+$/g, "")), bR("[" + r.match(/\+([a-z]+)/)[0] + "]")
+            ), length);
+        }
+
+        // %r0
+        if (Util.isRegister(r)) {
+            return Util.pad(parseInt(r.match(/\%r([0-9]+)/)[1]).toString(2), length);
+        }
+
+        // [x]
+        if (Util.isLocAdd(r)) {
+            var loc = parsed.addresses[r.match(/^\[([a-z]+)\]$/)[1]];
+            if (!loc) {
+                throw new Error("Invalid memory location: " + memLoc);
+            }
+            return Util.pad(loc.address.toString(2), length);
+        }
+
+        // hex
+        if (/^0x|H$/.test(r)) {
+            return Util.pad(parseInt(r, 16).toString(2), length);
+        }
+
+        // Int
+        if (/[0-9]+/.test(r)) {
+            // TODO Negative
+            return Util.pad(parseInt(r, 2).toString(2), length);
+        }
+    }
+
+    function getRd(line, raw) {
+        if (raw === true) {
+            return line.iArgs.slice(-1)[0];
+        }
+        return bR(getRd(line, true));
+    }
+
+    function getRs1(line, raw) {
+        if (raw === true) {
+            return line.iArgs[0];
+        }
+        var r = getRs1(line, true);
+        if (!/^\%r[0-9]+$/.test(r)) {
+            return "00000";
+        }
+        return bR(r);
+    }
+
+    function getRs2(line, raw) {
+        if (raw === true) {
+            return line.iArgs[1];
+        }
+        var r = getRs2(line, true);
+        if (!/^\%r[0-9]+$/.test(r)) {
+            return "00000";
+        }
+        return bR(r);
+    }
+
     var instruction = "";
 
     if (line.instruction) {
@@ -24,72 +91,65 @@ function compile(line, parsed) {
 
         switch (line.instruction) {
             case "ld":
-                // ld [x], %r(1-31)
-                // 11 00001 000000 00000 1 0100000010100
-                // op rd    op3    rs1   i simm13
-                // e.g. ld [x], %r1
-                if (/^ld \[[a-z]+\]\,\ ?\%r[0-9]+$/.test(line.c.trim())) {
+                if (line.iArgs.length >= 2) {
+                    var rd = getRd(line);
+                    var rs1 = getRs1(line);
+                    var rs2 = getRs2(line);
 
-                    // %r(1-31) (rd)
-                    instruction += (("00000" + parseInt(line.c.match(/ld \[[a-z]+\]\,\ ?\%r([0-9]+)/)[1]).toString(2)).slice(-5));
+                    // rd
+                    instruction += rd;
 
-                    // op3 (ld)
-                    instruction += ("000000");
+                    // op
+                    instruction += "000000";
 
                     // rs1
-                    instruction += ("00000");
+                    instruction += rs1;
 
-                    // i
-                    instruction += ("1");
 
-                    var memLoc = line.c.match(/\[([a-z]+)\]/)[1];
-                    var loc = parsed.addresses[memLoc];
-                    if (!loc) {
-                        throw new Error("Invalid memory location: " + memLoc);
+                    if (!Util.isLocAdd(getRs1(line, true))) {
+                        // i
+                        instruction += "0";
+                        instruction += "00000000";
+                        instruction += rs2;
+                    } else {
+                        instruction += "1";
+                        instruction += bR(getRs1(line, true), 13);
                     }
-
-                    // simm13
-                    instruction += (("0000000000000" + loc.address.toString(2)).slice(-13));
-                }
-                // ld [x], %r(1-31), %r(1-31)
-                // e.g. ld [x], %r0, %r1
-                else if (/^ld \[[a-z]+\]\,\ ?\%r[0-9]+,\ ?\%r[0-9]+$/.test(line.c.trim())) {
-                    // TODO
-                    throw new Error("Not yet implemented.");
-                }
-
-                // ld %r(1-31)\+[a-z]+, %r(1-31)
-                // e.g. ld %r0+x, %r1
-                else if (/^ld \%r[0-9]+\+[a-z]+\,\ ?\%r[0-9]+$/.test(line.c.trim())) {
-                    // TODO
-                    throw new Error("Not yet implemented.");
+                } else {
+                    throw new Error("Invalid syntax: " + line.c);
                 }
                 break;
             case "st":
-                // st %r(1-31) [...]
-                // e.g. st %r1, [x]
-                if (/^st \%r[0-9]+\,\ ?\[[a-z]+\]$/.test(line.c)) {
+                if (line.iArgs.length >= 2) {
+
+                    var rd = getRd(line);
+                    if (Util.isLocAdd(getRd(line, true))) {
+                        rd = Util.pad("", 5);
+                    }
+
+                    var rs1 = getRs1(line);
+                    var rs2 = getRs2(line);
 
                     // rd
-                    instruction += (("00000" + parseInt(line.iArgs[0].replace("%r", "")).toString(2)).slice(-5));
+                    instruction += rd;
 
-                    // op3 (st)
+                    // op
                     instruction += ("000100");
 
                     // rs1
-                    instruction += ("00000");
+                    instruction += rs1;
 
-                    // i
-                    instruction += ("1");
-
-                    var memLoc = line.iArgs[1].match(/\[([a-z]+)\]/)[1];
-                    var loc = parsed.addresses[memLoc];
-                    if (!loc) {
-                        throw new Error("Invalid memory location: " + memLoc);
+                    if (!Util.isLocAdd(getRd(line, true))) {
+                        // i
+                        instruction += "0";
+                        instruction += "00000000";
+                        instruction += rs2;
+                    } else {
+                        instruction += "1";
+                        instruction += bR(getRd(line, true), 13);
                     }
-
-                    // simm13
-                    instruction += (("0000000000000" + loc.address.toString(2)).slice(-13));
+                } else {
+                    throw new Error("Invalid syntax: " + line.c);
                 }
                 break;
 
@@ -105,29 +165,38 @@ function compile(line, parsed) {
                 break;
 
             case "addcc":
-                // addcc %r1, %r2, %r3
-                if (/^addcc \%r[0-9]+,\ ?\%r[0-9],\ ?\%r[0-9]+$/.test(line.c.trim())) {
+                debugger
+                if (line.iArgs.length === 3) {
 
-                    // %r(1-31) (rd)
-                    instruction += (("00000" + parseInt(line.iArgs[2].replace("%r", "")).toString(2)).slice(-5));
+                    var rd = getRd(line);
+                    if (Util.isLocAdd(getRd(line, true))) {
+                        rd = Util.pad("", 5);
+                    }
 
-                    // op3 (addcc)
+                    var rs1 = getRs1(line);
+                    var rs2 = getRs2(line);
+
+                    // rd
+                    instruction += rd;
+
+                    // op
                     instruction += ("010000");
 
-                    // %r(1-31) (rs1)
-                    instruction += (("00000" + parseInt(line.iArgs[0].replace("%r", "")).toString(2)).slice(-5));
+                    // rs1
+                    instruction += rs1;
 
-                    // i
-                    instruction += ("0");
-
-                    // 8 empty bits
-                    instruction += ("00000000");
-
-                    // %r(1-31) (rs2)
-                    instruction += (("00000" + parseInt(line.iArgs[1].replace("%r", "")).toString(2)).slice(-5));
+                    if (!Util.isLocAdd(getRd(line, true))) {
+                        // i
+                        instruction += "0";
+                        instruction += "00000000";
+                        instruction += rs2;
+                    } else {
+                        instruction += "1";
+                        instruction += bR(getRd(line, true), 13);
+                    }
+                } else {
+                    throw new Error("Invalid syntax: addcc requires 3 arguments");
                 }
-
-                // TODO
                 break;
         }
     }
