@@ -32,4 +32,6 @@ $(document).ready(function () {
     $(".ui.button.compile").on("click", function () {
         compileAndUpdateMCode(true);
     });
+
+    compileAndUpdateMCode();
 });
