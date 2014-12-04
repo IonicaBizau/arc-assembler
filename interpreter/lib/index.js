@@ -10,10 +10,8 @@ ArcInterpreter.registers = require("./registers");
 function s(inp, s, e) {
     var c = "";
     for (var i = s; i <= e; ++i) {
-        if (typeof inp[i] == "undefined") {
-            debugger
-        }
-       c += inp[i].toString();
+        if (typeof inp[i] === "undefined") { continue; }
+        c += inp[i].toString();
     }
     return c;
 }
