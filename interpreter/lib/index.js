@@ -143,3 +143,7 @@ for (var r in ArcInterpreter.registers) {
         });
     })(r);
 }
+
+if (typeof window === "object") {
+    window.ArcInterpreter = ArcInterpreter;
+}
