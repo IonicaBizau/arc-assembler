@@ -14,6 +14,7 @@ $(document).ready(function () {
         });
         $("pre.machine-code").html(output);
         $("pre.result").html(ArcInterpreter.interpret(result.mCode));
+        $("pre.registers").html(JSON.stringify(ArcInterpreter.r, null, 2));
     }
 
     var editor = ace.edit("editor");
