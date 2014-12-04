@@ -1,6 +1,7 @@
 var Path = require("path")
   , Fs = require("fs")
   , Operators = require("./operators")
+  , Util = require("../util")
   ;
 
 const INPUT_FILE = Path.resolve("../assembler/out");
@@ -47,8 +48,31 @@ function s(inp, s, e) {
     return c;
 }
 
-function getFromMemory(buff, cIns) {
-    return s(buff.slice(((parseInt(s(cIns, 31 - 12, 31), 2) - 2048) / 4 + 1) * 32), 0, 31);
+function getSimm13(buff, cIns) {
+    return s(buff.slice(((parseInt(s(cIns, 19, 31), 2) - 2048) / 4) * 32), 0, 31);
+}
+
+function rd(cIns) {
+    return s(cIns, 2, 6);
+}
+
+function rs1(cIns) {
+    return s(cIns, 13, 17);
+}
+
+function rs2(cIns) {
+    return s(cIns, 27, 31);
+}
+
+function rv(r, b) {
+    r = Registers[r];
+    if (!r) {
+        throw new Error("Register is empty.");
+    }
+    if (typeof b === "number") {
+        return parseInt(r, b);
+    }
+    return r;
 }
 
 function interpret(cIns, buff) {
@@ -65,12 +89,14 @@ function interpret(cIns, buff) {
             break;
         // ARITHMETIC
         case "10":
+            if (Operators[op] === "addcc") {
+                Registers[rd(cIns)] = Util.pad((rv(rs1(cIns), 2) + rv(rs2(cIns), 2)).toString(2), 32);
+            }
             break;
         // MEMORY
         case "11":
             if (Operators[op] === "ld") {
-            debugger;
-                Registers[s(cIns, 2, 6)] = getFromMemory(buff, cIns);
+                Registers[rd(cIns)] = getSimm13(buff, cIns);
             }
             break;
         default:
@@ -89,13 +115,19 @@ Fs.readFile(INPUT_FILE, function (err, buff) {
     }
 });
 
+var _r = {};
 for (var r in Registers) {
     (function (r) {
         delete Registers[r];
         Object.defineProperty(Registers, r, {
             writeable: true
           , set: function (newValue) {
+                _r[r] = newValue;
                 console.log(">> Register " + r + " was changed: " + newValue);
+            }
+          , get: function () {
+                console.log("<< Getting value from register: " + r);
+                return _r[r];
             }
         });
     })(r);
