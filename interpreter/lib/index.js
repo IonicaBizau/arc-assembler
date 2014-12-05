@@ -148,7 +148,7 @@ function interpret(cIns, buff) {
 
             if (Operators[op] === "st") {
                 var loc = getLoc(buff, cIns) * 32;
-                var rdc = Registers[rd(cIns)];
+                var rdc = rv(rd(cIns));
                 result += ">> Copying content from register " + rd(cIns) + " to memory location: " + loc + "\n";
                 for (var i = 0; i < 32; ++i) {
                     buff[loc + i] = rdc[i];
