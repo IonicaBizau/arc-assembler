@@ -16,8 +16,13 @@ $(document).ready(function () {
         });
 
         $("pre.machine-code").html(output);
-        $("pre.result").html(ArcInterpreter.interpret(result.mCode));
-        $("pre.registers").html(JSON.stringify(ArcInterpreter.r, null, 2));
+        try {
+            var iResult = ArcInterpreter.interpret(result.mCode)
+            $("pre.result").html(iResult);
+            $("pre.registers").html(JSON.stringify(ArcInterpreter.r, null, 2));
+        } catch (e) {
+            $("pre.result").html(e.message);
+        }
     }
 
     var editor = ace.edit("editor");
