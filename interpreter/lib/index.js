@@ -1,11 +1,11 @@
 var Path = require("path")
   , Operators = require("./operators")
   , Util = require("../../util")
+  , Registers = require("./registers")
   ;
 
 
 var ArcInterpreter = module.exports = {};
-ArcInterpreter.registers = require("./registers");
 
 function s(inp, s, e) {
     var c = "";
@@ -38,7 +38,7 @@ function rs2(cIns) {
 }
 
 function rv(r, b) {
-    r = ArcInterpreter.registers[r];
+    r = Registers[r];
     if (!r) {
         throw new Error("Register is empty.");
     }
@@ -77,19 +77,19 @@ function interpret(cIns, buff) {
         // ARITHMETIC
         case "10":
             if (Operators[op] === "addcc") {
-                ArcInterpreter.registers[rd(cIns)] = Util.pad((rv(rs1(cIns), 2) + rv(rs2(cIns), 2)).toString(2), 32);
+                Registers[rd(cIns)] = Util.pad((rv(rs1(cIns), 2) + rv(rs2(cIns), 2)).toString(2), 32);
             }
             break;
         // MEMORY
         case "11":
 
             if (Operators[op] === "ld") {
-                ArcInterpreter.registers[rd(cIns)] = getSimm13(buff, cIns);
+                Registers[rd(cIns)] = getSimm13(buff, cIns);
             }
 
             if (Operators[op] === "st") {
                 var loc = getLoc(buff, cIns) * 32;
-                var rdc = ArcInterpreter.registers[rd(cIns)];
+                var rdc = Registers[rd(cIns)];
                 result += ">> Copying content from register " + rd(cIns) + " to memory location: " + loc + "\n";
                 for (var i = 0; i < 32; ++i) {
                     buff[loc + i] = rdc[i];
@@ -103,12 +103,30 @@ function interpret(cIns, buff) {
     return result;
 }
 
+var _r = ArcInterpreter.r = {};
 ArcInterpreter.interpret = function (inp) {
     var output = "";
     for (var k in ArcInterpreter._r) {
         delete ArcInterpreter._r[k];
     }
     ended = false;
+    for (var r in Registers) {
+        (function (r) {
+            delete Registers[r];
+            Object.defineProperty(Registers, r, {
+                writeable: true
+              , set: function (newValue) {
+                    _r[r] = newValue;
+                    ArcInterpreter.rSet(">> Register " + r + " was changed: " + newValue);
+                }
+              , get: function () {
+                    ArcInterpreter.rSet("<< Getting value from register: " + r);
+                    return _r[r];
+                }
+            });
+        })(r);
+    }
+
 
     ArcInterpreter.rSet = function (m) {
         output += m + "\n";
@@ -127,24 +145,6 @@ ArcInterpreter.interpret = function (inp) {
     }
     return output.trim();
 };
-
-var _r = ArcInterpreter.r = {};
-for (var r in ArcInterpreter.registers) {
-    (function (r) {
-        delete ArcInterpreter.registers[r];
-        Object.defineProperty(ArcInterpreter.registers, r, {
-            writeable: true
-          , set: function (newValue) {
-                _r[r] = newValue;
-                ArcInterpreter.rSet(">> Register " + r + " was changed: " + newValue);
-            }
-          , get: function () {
-                ArcInterpreter.rSet("<< Getting value from register: " + r);
-                return _r[r];
-            }
-        });
-    })(r);
-}
 
 if (typeof window === "object") {
     window.ArcInterpreter = ArcInterpreter;
