@@ -106,8 +106,8 @@ function interpret(cIns, buff) {
 var _r = ArcInterpreter.r = {};
 ArcInterpreter.interpret = function (inp) {
     var output = "";
-    for (var k in ArcInterpreter._r) {
-        delete ArcInterpreter._r[k];
+    for (var k in ArcInterpreter.r) {
+        delete ArcInterpreter.r[k];
     }
     ended = false;
     for (var r in Registers) {
