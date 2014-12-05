@@ -1,9 +1,68 @@
 var Path = require("path")
   , Operators = require("./operators")
   , Util = require("../../util")
-  , Registers = require("./registers")
+  , Registers = {}
   ;
 
+function initRegisters() {
+    Registers = {
+        "00000": ""
+      , "00001": ""
+      , "00010": ""
+      , "00011": ""
+      , "00100": ""
+      , "00101": ""
+      , "00110": ""
+      , "00111": ""
+      , "01000": ""
+      , "01001": ""
+      , "01010": ""
+      , "01011": ""
+      , "01100": ""
+      , "01101": ""
+      , "01110": ""
+      , "01111": ""
+      , "10000": ""
+      , "10001": ""
+      , "10010": ""
+      , "10011": ""
+      , "10100": ""
+      , "10101": ""
+      , "10110": ""
+      , "10111": ""
+      , "11000": ""
+      , "11001": ""
+      , "11010": ""
+      , "11011": ""
+      , "11100": ""
+      , "11101": ""
+      , "11110": ""
+      , "11111": ""
+      , "PC": ""
+      , "PSR": ""
+    };
+
+    for (var k in ArcInterpreter.r) {
+        delete ArcInterpreter.r[k];
+    }
+
+    for (var r in Registers) {
+        (function (r) {
+            delete Registers[r];
+            Object.defineProperty(Registers, r, {
+                writeable: true
+              , set: function (newValue) {
+                    _r[r] = newValue;
+                    ArcInterpreter.rSet(">> Register " + r + " was changed: " + newValue);
+                }
+              , get: function () {
+                    ArcInterpreter.rSet("<< Getting value from register: " + r);
+                    return _r[r];
+                }
+            });
+        })(r);
+    }
+}
 
 var ArcInterpreter = module.exports = {};
 
@@ -106,27 +165,10 @@ function interpret(cIns, buff) {
 var _r = ArcInterpreter.r = {};
 ArcInterpreter.interpret = function (inp) {
     var output = "";
-    for (var k in ArcInterpreter.r) {
-        delete ArcInterpreter.r[k];
-    }
-    ended = false;
-    for (var r in Registers) {
-        (function (r) {
-            delete Registers[r];
-            Object.defineProperty(Registers, r, {
-                writeable: true
-              , set: function (newValue) {
-                    _r[r] = newValue;
-                    ArcInterpreter.rSet(">> Register " + r + " was changed: " + newValue);
-                }
-              , get: function () {
-                    ArcInterpreter.rSet("<< Getting value from register: " + r);
-                    return _r[r];
-                }
-            });
-        })(r);
-    }
 
+    initRegisters();
+
+    ended = false;
 
     ArcInterpreter.rSet = function (m) {
         output += m + "\n";
