@@ -13,19 +13,25 @@ var mnemonics = {
     }
 
   , "be": {
-        type: "call"
+        type: "control"
     }
   , "bcs": {
-        type: "call"
+        type: "control"
     }
   , "bneg": {
-        type: "call"
+        type: "control"
     }
   , "bvs": {
-        type: "call"
+        type: "control"
     }
   , "ba": {
-        type: "call"
+        type: "control"
+    }
+  , "ba": {
+        type: "control"
+    }
+  , "call": {
+        type: "control"
     }
 
   , "addcc": {
