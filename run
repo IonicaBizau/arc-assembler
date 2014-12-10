@@ -1,0 +1,7 @@
+#!/bin/bash
+cd assembler
+node index.js
+cd ../interpreter
+node index.js
+cd ..
+rm out
