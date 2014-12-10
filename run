@@ -1,7 +1,6 @@
 #!/bin/bash
-cd assembler
-node index.js
-cd ../interpreter
-node index.js
-cd ..
-rm out
+echo "---------- Compiling ...    -------------"
+node assembler/index.js
+echo "---------- Interpreting ... -------------"
+node interpreter/index.js
+echo "---------- Done.            -------------"
