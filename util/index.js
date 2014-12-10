@@ -21,3 +21,14 @@ Util.addBin = function () {
     }
     return r.toString(2);
 };
+
+Util.comp = function (input) {
+    return input.replace(/1/g, "a").replace(/0/g, "1").replace(/a/g, "0");
+};
+
+Util.uncomp = function (input) {
+    if (input[0] === "1") {
+        return -Util.uncomp(Util.comp(input));
+    }
+    return parseInt(input, 2);
+};

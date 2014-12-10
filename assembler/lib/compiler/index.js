@@ -1,5 +1,29 @@
 var Util = require("../../../util");
 
+function handleNumber(r, length) {
+    var value = ""
+    // hex
+    if (/^\-?0x|H$/.test(r)) {
+        debugger
+        value = Util.pad(parseInt(r.replace("-", ""), 16).toString(2), length);
+        if (r[0] === "-") {
+            value = Util.comp(value);
+        }
+        return value;
+    }
+
+    // Int
+    if (/[0-9]+/.test(r)) {
+        value = Util.pad(Math.abs(r).toString(2), length);
+        if (r[0] === "-") {
+            value = Util.comp(value);
+        }
+        return value;
+    }
+
+    throw new Error("Invalid number " + r);
+}
+
 function compile(line, parsed) {
 
     function bR(r, length) {
@@ -29,16 +53,7 @@ function compile(line, parsed) {
             return Util.pad(loc.address.toString(2), length);
         }
 
-        // hex
-        if (/^0x|H$/.test(r)) {
-            return Util.pad(parseInt(r, 16).toString(2), length);
-        }
-
-        // Int
-        if (/[0-9]+/.test(r)) {
-            // TODO Negative
-            return Util.pad(parseInt(r, 2).toString(2), length);
-        }
+        return handleNumber(r);
     }
 
     function getRd(line, raw) {
@@ -205,8 +220,7 @@ function compile(line, parsed) {
     }
 
     if (line.label && line.label !== "main") {
-        // TODO This handles only integers
-        instruction = Util.pad(parseInt(line.c).toString(2));
+        instruction = handleNumber(line.c, 32);
     }
 
     return instruction;
