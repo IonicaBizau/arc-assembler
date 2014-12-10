@@ -18,3 +18,22 @@ cp $ASM_BR_PATH clients/lib/arc-assembler.js
 
 echo "Updating client script: arc-interpreter.js"
 cp $INT_BR_PATH clients/lib/arc-interpreter.js
+
+echo "Updating gh-pages branch ..."
+cp -r clients ../
+
+echo "Checking out gh-pages branch ..."
+git checkout gh-pages
+
+echo "Updating files ..."
+cp -r ../clients/* .
+
+echo "Committing ..."
+git add . -A
+git commit -m "Updated browser version."
+
+echo "Going back to the master branch."
+git checkout master
+
+echo "Cleaning up ..."
+rm -rf ../clients
