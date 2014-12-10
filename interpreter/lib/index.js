@@ -6,38 +6,38 @@ var Path = require("path")
 
 function initRegisters() {
     Registers = {
-        "00000": ""
-      , "00001": ""
-      , "00010": ""
-      , "00011": ""
-      , "00100": ""
-      , "00101": ""
-      , "00110": ""
-      , "00111": ""
-      , "01000": ""
-      , "01001": ""
-      , "01010": ""
-      , "01011": ""
-      , "01100": ""
-      , "01101": ""
-      , "01110": ""
-      , "01111": ""
-      , "10000": ""
-      , "10001": ""
-      , "10010": ""
-      , "10011": ""
-      , "10100": ""
-      , "10101": ""
-      , "10110": ""
-      , "10111": ""
-      , "11000": ""
-      , "11001": ""
-      , "11010": ""
-      , "11011": ""
-      , "11100": ""
-      , "11101": ""
-      , "11110": ""
-      , "11111": ""
+        "00000": Util.pad(0, 32)
+      , "00001": Util.pad(0, 32)
+      , "00010": Util.pad(0, 32)
+      , "00011": Util.pad(0, 32)
+      , "00100": Util.pad(0, 32)
+      , "00101": Util.pad(0, 32)
+      , "00110": Util.pad(0, 32)
+      , "00111": Util.pad(0, 32)
+      , "01000": Util.pad(0, 32)
+      , "01001": Util.pad(0, 32)
+      , "01010": Util.pad(0, 32)
+      , "01011": Util.pad(0, 32)
+      , "01100": Util.pad(0, 32)
+      , "01101": Util.pad(0, 32)
+      , "01110": Util.pad(0, 32)
+      , "01111": Util.pad(0, 32)
+      , "10000": Util.pad(0, 32)
+      , "10001": Util.pad(0, 32)
+      , "10010": Util.pad(0, 32)
+      , "10011": Util.pad(0, 32)
+      , "10100": Util.pad(0, 32)
+      , "10101": Util.pad(0, 32)
+      , "10110": Util.pad(0, 32)
+      , "10111": Util.pad(0, 32)
+      , "11000": Util.pad(0, 32)
+      , "11001": Util.pad(0, 32)
+      , "11010": Util.pad(0, 32)
+      , "11011": Util.pad(0, 32)
+      , "11100": Util.pad(0, 32)
+      , "11101": Util.pad(0, 32)
+      , "11110": Util.pad(0, 32)
+      , "11111": Util.pad(0, 32)
       , "PC": ""
       , "PSR": ""
     };
@@ -116,7 +116,15 @@ function interpret(cIns, buff) {
     }
 
     if (Operators[op] === "jmpl") {
-        ended = true;
+        var jmp = parseInt(Registers[Util.pad((15).toString(2), 5)], 2);
+        if (!jmp) {
+            ended = true;
+        } else {
+            ArcInterpreter.cPosition = jmp + 32;
+            Registers[Util.pad((15).toString(2), 5)] = Util.pad("0", 32);
+            result += "Returning from subrutine.";
+            return;
+        }
     }
 
     if (ended) {
@@ -130,9 +138,12 @@ function interpret(cIns, buff) {
             break;
         // CALL
         case "01":
-            op = s(cIns, 8, 11);
-            var cond = s(cIns, 3, 7);
-            break;
+            var sub = parseInt(s(cIns, 2, 31), 2) - 2048;
+            var loc = (sub / 4 - 1)* 32;
+            result += "Calling subrutine located at memory location: " + (loc + 2048);
+            Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
+            ArcInterpreter.cPosition = loc;
+            return result;
         // ARITHMETIC
         case "10":
             if (Operators[op] === "addcc") {
@@ -149,7 +160,7 @@ function interpret(cIns, buff) {
             if (Operators[op] === "st") {
                 var loc = getLoc(buff, cIns) * 32;
                 var rdc = rv(rd(cIns));
-                result += ">> Copying content from register " + rd(cIns) + " to memory location: " + loc;
+                result += ">> Copying content from register " + rd(cIns) + " to memory location: " + (loc + 2048);
                 for (var i = 0; i < 32; ++i) {
                     buff[loc + i] = parseInt(rdc[i]);
                 }
@@ -159,6 +170,8 @@ function interpret(cIns, buff) {
             throw new Error("Invalid instruction format.");
             break;
     }
+
+    ArcInterpreter.cPosition += 32;
     return result;
 }
 
@@ -178,13 +191,15 @@ ArcInterpreter.interpret = function (inp) {
         output += m + "\n";
     };
 
-    for (var i = 0; i < inp.length; i += 32) {
-        var cIns = inp.slice(i, i + 32)
+    ArcInterpreter.cPosition = 0;
+    while (!ended) {
+        var cIns = inp.slice(ArcInterpreter.cPosition, ArcInterpreter.cPosition + 32)
           , result = interpret(cIns, inp)
           ;
 
         output += result ? result + "\n" : "";
     }
+
     return output.trim();
 };
 
