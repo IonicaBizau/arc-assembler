@@ -13,22 +13,22 @@ var mnemonics = {
     }
 
   , "be": {
-        type: "control"
+        type: "branch"
     }
   , "bcs": {
-        type: "control"
+        type: "branch"
     }
   , "bneg": {
-        type: "control"
+        type: "branch"
     }
   , "bvs": {
-        type: "control"
+        type: "branch"
     }
   , "ba": {
-        type: "control"
+        type: "branch"
     }
   , "ba": {
-        type: "control"
+        type: "branch"
     }
   , "call": {
         type: "control"
