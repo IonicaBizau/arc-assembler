@@ -38,8 +38,8 @@ function initRegisters() {
       , "11101": Util.pad(0, 32)
       , "11110": Util.pad(0, 32)
       , "11111": Util.pad(0, 32)
-      , "PC": ""
-      , "PSR": ""
+      , "PC":    Util.pad(0, 32)
+      , "PSR":   Util.pad(0, 32) // 0000 ... z n c v
     };
 
     for (var k in ArcInterpreter.r) {
