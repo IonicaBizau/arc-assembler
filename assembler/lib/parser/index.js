@@ -69,6 +69,9 @@ function parse(lines) {
     for (var i in lines) {
         var c = lines[i];
         c = c.replace(/\!.*$/g, "");
+        if (!c.trim().length) {
+            continue;
+        }
 
         var op = ((c.match(/\.([a-z]+)/) || [])[1] || "").trim()
           , label = ((c.match(/^([a-z]+):\ /) || [])[1] || "").trim()
