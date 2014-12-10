@@ -100,13 +100,15 @@ function compile(line, parsed) {
             case "branch":
                 instruction += "00";
                 break;
-            case "call":
+            case "control":
                 instruction += "01";
                 break;
         }
 
 
         switch (line.instruction) {
+
+            // Memory
             case "ld":
                 if (line.iArgs.length >= 2) {
                     var rd = getRd(line);
@@ -171,6 +173,7 @@ function compile(line, parsed) {
                 }
                 break;
 
+            // Arithmetic
             case "jmpl":
                 if (/^jmpl \%r[0-9]+\+[0-9]+\,\ ?\%r[0-9]+$/.test(line.c)) {
                     instruction += (("00000" + eval(line.iArgs[1].replace("%r", "")).toString(2)).slice(-5));
@@ -214,6 +217,11 @@ function compile(line, parsed) {
                 } else {
                     throw new Error("Invalid syntax: addcc requires 3 arguments");
                 }
+                break;
+            // Control
+            case "call":
+                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for call instruction."); }
+                instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 30);
                 break;
         }
     }
