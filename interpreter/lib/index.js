@@ -102,7 +102,7 @@ function rv(r, b) {
         throw new Error("Register is empty.");
     }
     if (typeof b === "number") {
-        return parseInt(r, b);
+        return Util.uncomp(r);
     }
     return r;
 }
