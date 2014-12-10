@@ -1,0 +1,12 @@
+#!/bin/bash
+echo "Building browser version for ARC assembler."
+browserify assembler/lib/index.js -o assembler/browser/arc-assembler.js
+
+echo "Building browser version for ARC interpreter."
+browserify interpreter/lib/index.js -o interpreter/browser/arc-interpreter.js
+
+echo "Updating client script: arc-assembler.js"
+cp assembler/browser/arc-assembler.js clients/lib/arc-assembler.js
+
+echo "Updating client script: arc-interpreter.js"
+cp interpreter/browser/arc-interpreter.js clients/lib/arc-interpreter.js
