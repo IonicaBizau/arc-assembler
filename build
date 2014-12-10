@@ -5,6 +5,10 @@ browserify assembler/lib/index.js -o assembler/browser/arc-assembler.js
 echo "Building browser version for ARC interpreter."
 browserify interpreter/lib/index.js -o interpreter/browser/arc-interpreter.js
 
+echo "Running minify tasks"
+uglifyjs assembler/browser/arc-assembler.js -o assembler/browser/arc-assembler.js
+uglifyjs interpreter/browser/arc-interpreter.js -o interpreter/browser/arc-interpreter.js
+
 echo "Updating client script: arc-assembler.js"
 cp assembler/browser/arc-assembler.js clients/lib/arc-assembler.js
 
