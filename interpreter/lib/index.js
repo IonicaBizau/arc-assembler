@@ -76,11 +76,11 @@ function s(inp, s, e) {
 }
 
 function getLoc(buff, cIns) {
-    return (parseInt(s(cIns, 19, 31), 2) - 2048) / 4 - 1;
+    return (parseInt(s(cIns, 19, 31), 2) - 2048) / 4;
 }
 
 function getSimm13(buff, cIns) {
-    return s(buff.slice((getLoc(buff, cIns) + 1) * 32), 0, 31);
+    return s(buff.slice((getLoc(buff, cIns)) * 32), 0, 31);
 }
 
 
@@ -149,9 +149,9 @@ function interpret(cIns, buff) {
             if (Operators[op] === "st") {
                 var loc = getLoc(buff, cIns) * 32;
                 var rdc = rv(rd(cIns));
-                result += ">> Copying content from register " + rd(cIns) + " to memory location: " + loc + "\n";
+                result += ">> Copying content from register " + rd(cIns) + " to memory location: " + loc;
                 for (var i = 0; i < 32; ++i) {
-                    buff[loc + i] = rdc[i];
+                    buff[loc + i] = parseInt(rdc[i]);
                 }
             }
             break;
