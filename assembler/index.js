@@ -2,8 +2,8 @@ var Fs = require("fs")
   , ArcAssembler = require("./lib")
   ;
 
-const OUTPUT_FILE = "./out"
-    , INPUT_FILE = "./Test.asm"
+const OUTPUT_FILE = __dirname + "/out"
+    , INPUT_FILE = __dirname + "/Test.asm"
     ;
 
 var outputStream = Fs.createWriteStream(OUTPUT_FILE);
