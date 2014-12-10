@@ -4,7 +4,6 @@ function handleNumber(r, length) {
     var value = ""
     // hex
     if (/^\-?0x|H$/.test(r)) {
-        debugger
         value = Util.pad(parseInt(r.replace("-", ""), 16).toString(2), length);
         if (r[0] === "-") {
             value = Util.comp(value);
