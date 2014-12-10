@@ -147,7 +147,13 @@ function interpret(cIns, buff) {
         // ARITHMETIC
         case "10":
             if (Operators[op] === "addcc") {
-                Registers[rd(cIns)] = Util.pad((rv(rs1(cIns), 2) + rv(rs2(cIns), 2)).toString(2), 32);
+                var r = Util.uncomp(Util.pad(rv(rs1(cIns), 2))) + Util.uncomp(Util.pad(rv(rs2(cIns), 2).toString(2), 32));
+                if (r < 0) {
+                    r = Util.comp(Util.pad(r.toString(2), 32));
+                } else {
+                    r = Util.pad(r.toString(2), 32);
+                }
+                Registers[rd(cIns)] = r;
             }
             break;
         // MEMORY
