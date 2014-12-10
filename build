@@ -18,3 +18,5 @@ cp $ASM_BR_PATH clients/lib/arc-assembler.js
 
 echo "Updating client script: arc-interpreter.js"
 cp $INT_BR_PATH clients/lib/arc-interpreter.js
+
+git commit -m 'Updated client files' .
