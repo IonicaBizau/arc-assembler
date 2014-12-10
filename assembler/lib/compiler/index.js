@@ -218,7 +218,7 @@ function compile(line, parsed) {
         }
     }
 
-    if (line.label && line.label !== "main") {
+    if (line.label && !line.instruction) {
         instruction = handleNumber(line.c, 32);
     }
 
