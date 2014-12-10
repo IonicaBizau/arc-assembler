@@ -3,12 +3,10 @@
 !
       .begin
       .org 2048
-main: ld [x], %r1               ! load x into %r1 | 11
-      ld [y], %r2               ! load y into %r2
-      addcc %r1, %r2, %r3       ! %r3 <- %r1 + %r2
-      st %r3, [z]               ! store %r3 into z
+main: ld [x], %r1               ! load x into %r1 | 15
+      st %r1, [y]               ! store %r1 into [y]
+      ld [y], %r2               ! load y into %r2 | 15
       jmpl %r15+4, %r0          ! standard return
 x:    15
-y:    9
-z:    0
+y:    0
       .end
