@@ -32,3 +32,10 @@ Util.uncomp = function (input) {
     }
     return parseInt(input, 2);
 };
+
+Util.bin = function (input, l) {
+    if (input >= 0) {
+        return Util.pad(input.toString(2), l);
+    }
+    return Util.comp(Util.bin(Math.abs(input), l));
+};
