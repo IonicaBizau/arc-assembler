@@ -1,3 +1,7 @@
+!
+! This program sums two numbers
+!
+
         .begin
         .org 2048
 
