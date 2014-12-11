@@ -11,7 +11,7 @@ Util.isRegister = function (inp) {
 };
 
 Util.isLocAdd = function (inp) {
-    return /^\[[a-z]+\]$/.test(inp);
+    return /^\[[a-z,_]+\]$/.test(inp);
 };
 
 Util.addBin = function () {
