@@ -1,25 +1,32 @@
 !
-! This program sums two numbers
+! This program calculates the product of two positive numbers
 !
 
         .begin
         .org 2048
 
-main:   ld [true], %r1
-        ld [false], %r2
-        ld [n], %r9
-        ld [m], %r10
-        orcc %r1, %r2, %r0
-        be add
-        jmpl %r15+4, %r0
+main:       ld [x], %r10            ! load x into r10
+            ld [y], %r11            ! load y into r11
+            ld [minus_one], %r14    ! r14 = -1
+            call pre_mult
+            call mult               ! call the mult subrutine
+            jmpl %r15+4, %r0        ! Done
 
-add:    addcc %r9, %r10, %r11
-        jmpl %r15+4, %r0
+pre_mult:   addcc %r11, %r14, %r11
+            jmpl %r15+4, %r0        ! Done
 
-true:   1
-false:  0
+mult:       addcc %r10, %r10, %r10  ! x += x
+            addcc %r11, %r14, %r11
+            orncc %r0, %r11, %r16   ! check if r11 is 0
+            be mult
+            jmpl %r15+4, %r0
 
-n:      10
-m:      -0xa
+m_tmp: 0
+minus_one: -1
+plus_one: 1
+
+x:      5
+y:      4
+z:      0
 
         .end
