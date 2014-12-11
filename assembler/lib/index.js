@@ -18,7 +18,10 @@ ArcAssembler.compile = function (lines) {
     }
     var parsed = Parse(lines);
     parsed.lines.forEach(function (c, i) {
-        var ins = ArcAssembler.compileLine(parsed.lines[i], parsed);
+        if (!c._c) {
+            return;
+        }
+        var ins = ArcAssembler.compileLine(c, parsed);
         if (!ins.length) { return; }
         result.raw.push({
             code: ins
