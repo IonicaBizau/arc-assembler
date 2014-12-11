@@ -150,7 +150,7 @@ function parse(lines) {
             };
         }
 
-        if (cLine._c && result._cAddress !== -1) {
+        if (cLine.c && result._cAddress !== -1) {
             result._cAddress += 4;
         }
 
