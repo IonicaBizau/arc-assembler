@@ -1,24 +1,25 @@
 !
-! An "if" written for ARC assembler
+! This program sums two numbers
 !
 
         .begin
         .org 2048
 
-main:   ld [x], %r1
-        ld [y], %r2
-        orncc %r1, %r2, %r4
-        be load_x
-        bneg load_y
+main:   ld [true], %r1
+        ld [false], %r2
+        ld [n], %r9
+        ld [m], %r10
+        andcc %r1, %r2, %r0
+        be add
         jmpl %r15+4, %r0
 
-load_x: ld [x], %r3
+add:    addcc %r9, %r10, %r11
         jmpl %r15+4, %r0
 
-load_y: ld [y], %r4
-        jmpl %r15+4, %r0
+true:   1
+false:  0
 
-x:      1
-y:      0
+n:      10
+m:      -0xa
 
         .end
