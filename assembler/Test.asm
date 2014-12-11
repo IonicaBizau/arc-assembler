@@ -9,7 +9,7 @@ main:   ld [true], %r1
         ld [false], %r2
         ld [n], %r9
         ld [m], %r10
-        andcc %r1, %r2, %r0
+        orcc %r1, %r2, %r0
         be add
         jmpl %r15+4, %r0
 
