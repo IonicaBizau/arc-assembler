@@ -42,7 +42,7 @@ function compile(line, parsed) {
 
         // [x]
         if (Util.isLocAdd(r)) {
-            var add = r.match(/^\[([a-z]+)\]$/)[1]
+            var add = r.match(/^\[([a-z,_]+)\]$/)[1]
               , loc = parsed.addresses[add]
               ;
 
@@ -297,6 +297,9 @@ function compile(line, parsed) {
             // Control
             case "call":
                 if (line.iArgs.length > 1) { throw new Error("Too many argumnets for call instruction."); }
+                if (!parsed.addresses[line.iArgs[0]]) {
+                    throw new Error("Subrutine " +line.iArgs[0] + " doesn't exist");
+                }
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 30);
                 break;
             case "jmpl":
