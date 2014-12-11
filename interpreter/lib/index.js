@@ -57,7 +57,7 @@ function initRegisters() {
                 writeable: true
               , set: function (newValue) {
                     _r[r] = newValue;
-                    ArcInterpreter.rSet(">> Register " + RegisterMap[r] + " was set: " + parseInt(newValue, 2));
+                    ArcInterpreter.rSet(">> Register " + RegisterMap[r] + " was set: " + Util.uncomp(newValue));
                 }
               , get: function () {
                     ArcInterpreter.rSet("<< Getting value from register: " + RegisterMap[r]);
@@ -127,7 +127,7 @@ var PSR = {
     }
   , z: {
         set: function (v) {
-            var value = parseInt(v, 2);
+            var value = Util.uncomp(v);
             Registers.PSR = Registers.PSR.split("").map(function (c, i) {
                 if (i === 9) {
                     if (value === 0) {
@@ -220,7 +220,7 @@ function interpret(cIns, buff) {
             if (Operators[op] === "branch") {
                 var cond = s(cIns, 3, 6);
                 var sub = parseInt(s(cIns, 10, 31), 2) - 2048;
-                var loc = (sub / 4 - 1) * 32;
+                var loc = (sub / 4) * 32;
 
                 // be
                 if (Operators[cond] === "be" && PSR.z.get()) {
@@ -248,7 +248,7 @@ function interpret(cIns, buff) {
         // CALL
         case "01":
             var sub = parseInt(s(cIns, 2, 31), 2) - 2048;
-            var loc = (sub / 4 - 1)* 32;
+            var loc = (sub / 4)* 32;
             result += "Calling subrutine located at memory location: " + (loc + 2048);
             Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
             ArcInterpreter.cPosition = loc;
