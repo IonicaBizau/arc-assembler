@@ -2,7 +2,7 @@
   "name": "arc-assembler",
   "version": "1.0.0",
   "description": "An ARC assembler.",
-  "main": "index.js",
+  "main": "assembler/lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
