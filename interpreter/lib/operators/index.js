@@ -1,6 +1,7 @@
 var Operators = module.exports = {
     "010":      "branch"
   , "100":      "sethi"
+
   , "010000":   "addcc"
   , "010001":   "andcc"
   , "010010":   "orcc"

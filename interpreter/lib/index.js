@@ -39,7 +39,8 @@ function initRegisters() {
       , "11110": Util.pad(0, 32)
       , "11111": Util.pad(0, 32)
       , "PC":    Util.pad(0, 32)
-      , "PSR":   Util.pad(0, 32) // 0000 ... z n c v
+      , "PSR":   Util.pad(0, 32) // 0000 ... n z c  v
+                                 // 0123 ... 8 9 10 11
     };
 
     for (var k in ArcInterpreter.r) {
@@ -48,6 +49,7 @@ function initRegisters() {
 
     for (var r in Registers) {
         (function (r) {
+            _r[r] = Registers[r];
             delete Registers[r];
             Object.defineProperty(Registers, r, {
                 writeable: true
@@ -65,6 +67,45 @@ function initRegisters() {
 }
 
 var ArcInterpreter = module.exports = {};
+
+var PSR = {
+    n: {
+        set: function (v) {
+            var value = parseInt(v, 2);
+            Registers.PSR = Registers.PSR.split("").map(function (c, i) {
+                if (i === 8) {
+                    if (value === 0) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+                return c;
+            }).join("");
+        }
+      , get: function (v) {
+            return parseInt(Registers.PSR[8]);
+        }
+    }
+  , z: {
+        set: function (v) {
+            var value = parseInt(v[0]);
+            Registers.PSR = Registers.PSR.split("").map(function (c, i) {
+                if (i === 9) {
+                    if (value === 1) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+                return c;
+            }).join("");
+        }
+      , get: function (v) {
+            return parseInt(Registers.PSR[9]);
+        }
+    }
+};
 
 function s(inp, s, e) {
     var c = "";
@@ -132,10 +173,40 @@ function interpret(cIns, buff) {
     }
 
     switch(s(cIns, 0, 1)) {
+
         // SETHI/BRANCH
         case "00":
-            op = s(cIns, 8, 11);
+            op = s(cIns, 7, 9);
+
+            // branch
+            if (Operators[op] === "branch") {
+                var cond = s(cIns, 3, 6);
+                var sub = parseInt(s(cIns, 10, 31), 2) - 2048;
+                var loc = (sub / 4 - 1) * 32;
+
+                // be
+                if (Operators[cond] === "be" && PSR.z.get()) {
+                    result += "Calling subrutine located at memory location: " + (loc + 2048);
+                    Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
+                    ArcInterpreter.cPosition = loc;
+                    return result;
+                }
+
+                // bneg
+                if (Operators[cond] === "bneg" && PSR.n.get()) {
+                    result += "Calling subrutine located at memory location: " + (loc + 2048);
+                    Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
+                    ArcInterpreter.cPosition = loc;
+                    return result;
+                }
+            }
+
+            if (Operators[op] === "sethi") {
+                // TODO
+                throw new Error("sethi is not supported.");
+            }
             break;
+
         // CALL
         case "01":
             var sub = parseInt(s(cIns, 2, 31), 2) - 2048;
@@ -144,12 +215,34 @@ function interpret(cIns, buff) {
             Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
             ArcInterpreter.cPosition = loc;
             return result;
+
         // ARITHMETIC
         case "10":
             if (Operators[op] === "addcc") {
-                Registers[rd(cIns)] = Util.bin(rv(rs1(cIns), 2) + rv(rs2(cIns), 2))
+                var r = Registers[rd(cIns)] = Util.bin(rv(rs1(cIns), 2) + rv(rs2(cIns), 2))
+                PSR.z.set(r);
+                PSR.n.set(r);
+            }
+
+            if (Operators[op] === "andcc") {
+                var r = Registers[rd(cIns)] = Util.bin(rv(rs1(cIns), 2) & rv(rs2(cIns), 2))
+                PSR.z.set(r);
+                PSR.n.set(r);
+            }
+
+            if (Operators[op] === "orcc") {
+                var r = Registers[rd(cIns)] = Util.bin(rv(rs1(cIns), 2) | rv(rs2(cIns), 2))
+                PSR.z.set(r);
+                PSR.n.set(r);
+            }
+
+            if (Operators[op] === "orncc") {
+                var r = Registers[rd(cIns)] = Util.comp(Util.pad((rv(rs1(cIns), 2) | rv(rs2(cIns), 2))));
+                PSR.z.set(r);
+                PSR.n.set(r);
             }
             break;
+
         // MEMORY
         case "11":
 
