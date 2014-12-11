@@ -19,7 +19,11 @@ $(document).ready(function () {
         try {
             var iResult = ArcInterpreter.interpret(result.mCode)
             $("pre.result").html(iResult);
-            $("pre.registers").html(JSON.stringify(ArcInterpreter.r, null, 2));
+            var reg = {};
+            Object.keys(ArcInterpreter.r).forEach(function (c, i) {
+                reg[ArcInterpreter.registerMap[c]] = ArcInterpreter.r[c];
+            });
+            $("pre.registers").html(JSON.stringify(reg));
         } catch (e) {
             $("pre.result").html(e.message);
         }
