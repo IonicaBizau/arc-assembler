@@ -69,12 +69,9 @@ function parse(lines) {
     for (var i in lines) {
         var c = lines[i];
         c = c.replace(/\!.*$/g, "");
-        if (!c.trim().length) {
-            continue;
-        }
 
         var op = ((c.match(/\.([a-z]+)/) || [])[1] || "").trim()
-          , label = ((c.match(/^([a-z]+):\ /) || [])[1] || "").trim()
+          , label = ((c.match(/^([a-z,_]+):\ /) || [])[1] || "").trim()
           , instruction = null
           , iArgs = []
           , oArgs = []
@@ -147,14 +144,13 @@ function parse(lines) {
             }
         }
 
-        if (cLine.label) {
+        if (cLine.label && !result.addresses[cLine.label]) {
             result.addresses[cLine.label] = {
-                value: cLine.content
-              , address: result._cAddress
+                address: result._cAddress
             };
         }
 
-        if (c.trim() && result._cAddress !== -1) {
+        if (cLine._c && result._cAddress !== -1) {
             result._cAddress += 4;
         }
 
