@@ -71,10 +71,10 @@ var ArcInterpreter = module.exports = {};
 var PSR = {
     n: {
         set: function (v) {
-            var value = parseInt(v, 2);
+            var value = parseInt(v, v[0]);
             Registers.PSR = Registers.PSR.split("").map(function (c, i) {
                 if (i === 8) {
-                    if (value === 0) {
+                    if (value === 1) {
                         return 1;
                     } else {
                         return 0;
@@ -89,10 +89,10 @@ var PSR = {
     }
   , z: {
         set: function (v) {
-            var value = parseInt(v[0]);
+            var value = parseInt(v);
             Registers.PSR = Registers.PSR.split("").map(function (c, i) {
                 if (i === 9) {
-                    if (value === 1) {
+                    if (value === 0) {
                         return 1;
                     } else {
                         return 0;
