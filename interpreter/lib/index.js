@@ -4,6 +4,8 @@ var Path = require("path")
   , Registers = {}
   ;
 
+
+
 function initRegisters() {
     Registers = {
         "00000": Util.pad(0, 32)
@@ -55,10 +57,10 @@ function initRegisters() {
                 writeable: true
               , set: function (newValue) {
                     _r[r] = newValue;
-                    ArcInterpreter.rSet(">> Register " + r + " was changed: " + newValue);
+                    ArcInterpreter.rSet(">> Register " + RegisterMap[r] + " was set: " + parseInt(newValue, 2));
                 }
               , get: function () {
-                    ArcInterpreter.rSet("<< Getting value from register: " + r);
+                    ArcInterpreter.rSet("<< Getting value from register: " + RegisterMap[r]);
                     return _r[r];
                 }
             });
@@ -67,11 +69,47 @@ function initRegisters() {
 }
 
 var ArcInterpreter = module.exports = {};
+var RegisterMap = ArcInterpreter.registerMap = {
+    "00000": "r0"
+  , "00001": "r1"
+  , "00010": "r2"
+  , "00011": "r3"
+  , "00100": "r4"
+  , "00101": "r5"
+  , "00110": "r6"
+  , "00111": "r7"
+  , "01000": "r8"
+  , "01001": "r9"
+  , "01010": "r10"
+  , "01011": "r11"
+  , "01100": "r12"
+  , "01101": "r13"
+  , "01110": "r14"
+  , "01111": "r15"
+  , "10000": "r16"
+  , "10001": "r17"
+  , "10010": "r18"
+  , "10011": "r19"
+  , "10100": "r20"
+  , "10101": "r21"
+  , "10110": "r22"
+  , "10111": "r23"
+  , "11000": "r24"
+  , "11001": "r25"
+  , "11010": "r26"
+  , "11011": "r27"
+  , "11100": "r28"
+  , "11101": "r29"
+  , "11110": "r30"
+  , "11111": "r31"
+  , "PC":    "PC"
+  , "PSR":   "PSR"
+};
 
 var PSR = {
     n: {
         set: function (v) {
-            var value = parseInt(v, v[0]);
+            var value = parseInt(v[0]);
             Registers.PSR = Registers.PSR.split("").map(function (c, i) {
                 if (i === 8) {
                     if (value === 1) {
@@ -89,7 +127,7 @@ var PSR = {
     }
   , z: {
         set: function (v) {
-            var value = parseInt(v);
+            var value = parseInt(v, 2);
             Registers.PSR = Registers.PSR.split("").map(function (c, i) {
                 if (i === 9) {
                     if (value === 0) {
@@ -253,7 +291,7 @@ function interpret(cIns, buff) {
             if (Operators[op] === "st") {
                 var loc = getLoc(buff, cIns) * 32;
                 var rdc = rv(rd(cIns));
-                result += ">> Copying content from register " + rd(cIns) + " to memory location: " + (loc + 2048);
+                result += ">> Copying content from register " + RegisterMap[rd(cIns)] + " to memory location: " + (loc + 2048);
                 for (var i = 0; i < 32; ++i) {
                     buff[loc + i] = parseInt(rdc[i]);
                 }
