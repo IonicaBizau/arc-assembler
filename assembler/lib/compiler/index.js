@@ -174,17 +174,6 @@ function compile(line, parsed) {
                 break;
 
             // Arithmetic
-            case "jmpl":
-                if (/^jmpl \%r[0-9]+\+[0-9]+\,\ ?\%r[0-9]+$/.test(line.c)) {
-                    instruction += (("00000" + eval(line.iArgs[1].replace("%r", "")).toString(2)).slice(-5));
-                    instruction += ("111000");
-                    instruction += (("00000" + parseInt(line.iArgs[0].replace(/\%r|\+[0-9]+/g, "")).toString(2)).slice(-5));
-                    instruction += ("1");
-                    // simm13
-                    instruction += (("0000000000000" + parseInt(line.iArgs[0].match(/\+([0-9]+)/)).toString(2)).slice(-13));
-                }
-                break;
-
             case "addcc":
                 if (line.iArgs.length === 3) {
 
@@ -218,10 +207,141 @@ function compile(line, parsed) {
                     throw new Error("Invalid syntax: addcc requires 3 arguments");
                 }
                 break;
+            case "andcc":
+                if (line.iArgs.length === 3) {
+
+                    var rd = getRd(line);
+                    var rs1 = getRs1(line);
+                    var rs2 = getRs2(line);
+
+                    // rd
+                    instruction += rd;
+
+                    // op
+                    instruction += "010001";
+
+                    // rs1
+                    instruction += rs1;
+
+                    if (!Util.isLocAdd(getRd(line, true))) {
+                        // i
+                        instruction += "0";
+                        instruction += "00000000";
+                        instruction += rs2;
+                    } else {
+                        instruction += "1";
+                        instruction += bR(getRd(line, true), 13);
+                    }
+                } else {
+                    throw new Error("Invalid syntax: andcc requires 3 arguments");
+                }
+                break;
+            case "orcc":
+                if (line.iArgs.length === 3) {
+
+                    var rd = getRd(line);
+                    var rs1 = getRs1(line);
+                    var rs2 = getRs2(line);
+
+                    // rd
+                    instruction += rd;
+
+                    // op
+                    instruction += "010010";
+
+                    // rs1
+                    instruction += rs1;
+
+                    if (!Util.isLocAdd(getRd(line, true))) {
+                        // i
+                        instruction += "0";
+                        instruction += "00000000";
+                        instruction += rs2;
+                    } else {
+                        instruction += "1";
+                        instruction += bR(getRd(line, true), 13);
+                    }
+                } else {
+                    throw new Error("Invalid syntax: orcc requires 3 arguments");
+                }
+                break;
+            case "orncc":
+                if (line.iArgs.length === 3) {
+
+                    var rd = getRd(line);
+                    var rs1 = getRs1(line);
+                    var rs2 = getRs2(line);
+
+                    // rd
+                    instruction += rd;
+
+                    // op
+                    instruction += "010110";
+
+                    // rs1
+                    instruction += rs1;
+
+                    if (!Util.isLocAdd(getRd(line, true))) {
+                        // i
+                        instruction += "0";
+                        instruction += "00000000";
+                        instruction += rs2;
+                    } else {
+                        instruction += "1";
+                        instruction += bR(getRd(line, true), 13);
+                    }
+                } else {
+                    throw new Error("Invalid syntax: orncc requires 3 arguments");
+                }
+                break;
             // Control
             case "call":
                 if (line.iArgs.length > 1) { throw new Error("Too many argumnets for call instruction."); }
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 30);
+                break;
+            case "jmpl":
+                if (/^jmpl \%r[0-9]+\+[0-9]+\,\ ?\%r[0-9]+$/.test(line.c)) {
+                    instruction += (("00000" + eval(line.iArgs[1].replace("%r", "")).toString(2)).slice(-5));
+                    instruction += ("111000");
+                    instruction += (("00000" + parseInt(line.iArgs[0].replace(/\%r|\+[0-9]+/g, "")).toString(2)).slice(-5));
+                    instruction += ("1");
+                    // simm13
+                    instruction += (("0000000000000" + parseInt(line.iArgs[0].match(/\+([0-9]+)/)).toString(2)).slice(-13));
+                }
+                break;
+            case "be":
+                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for be instruction."); }
+                instruction += "0";
+                instruction += "0001";
+                instruction += "010";
+                instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
+                break;
+            case "bcs":
+                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bcs instruction."); }
+                instruction += "0";
+                instruction += "0101";
+                instruction += "010";
+                instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
+            case "bneg":
+                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bneg instruction."); }
+                instruction += "0";
+                instruction += "0110";
+                instruction += "010";
+                instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
+                break;
+            case "bvs":
+                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bneg instruction."); }
+                instruction += "0";
+                instruction += "0111";
+                instruction += "010";
+                instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
+                break;
+            case "ba":
+                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bneg instruction."); }
+                instruction += "0";
+                instruction += "1000";
+                instruction += "010";
+                instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
                 break;
         }
     }
