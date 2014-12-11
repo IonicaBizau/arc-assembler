@@ -1,22 +1,24 @@
 !
-! This program sums two numbers
+! An "if" written for ARC assembler
 !
 
         .begin
         .org 2048
 
-main:   ld [x], %r9                 ! load x into r9
-        ld [y], %r10                ! load y into r10
-        call sum                    ! call sum subrutine
-        st %r11, [z]                ! store the result in z
-        ld [z], %r9
-        jmpl %r15+4, %r0            ! Done
+main:   ld [x], %r1
+        ld [y], %r2
+        orncc %r1, %r2, %r4
+        be load_x
+        bneg load_y
+        jmpl %r15+4, %r0
 
-sum:    addcc %r9, %r10, %r11       ! sums the registers r9 and r10 into %r11
-        jmpl %r15+4, %r0            ! standard return
+load_x: ld [x], %r3
+        jmpl %r15+4, %r0
 
-x:      10
-y:      -20
-z:      0
+load_y: ld [y], %r4
+        jmpl %r15+4, %r0
+
+x:      1
+y:      0
 
         .end
