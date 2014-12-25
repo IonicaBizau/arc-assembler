@@ -40,7 +40,13 @@ var mnemonics = {
   , "andcc": {
         type: "arithmetic"
     }
+  , "andncc": {
+        type: "arithmetic"
+    }
   , "orcc": {
+        type: "arithmetic"
+    }
+  , "xorcc": {
         type: "arithmetic"
     }
   , "orncc": {

@@ -237,6 +237,35 @@ function compile(line, parsed) {
                     throw new Error("Invalid syntax: andcc requires 3 arguments");
                 }
                 break;
+            case "andncc":
+                if (line.iArgs.length === 3) {
+
+                    var rd = getRd(line);
+                    var rs1 = getRs1(line);
+                    var rs2 = getRs2(line);
+
+                    // rd
+                    instruction += rd;
+
+                    // op
+                    instruction += "011000";
+
+                    // rs1
+                    instruction += rs1;
+
+                    if (!Util.isLocAdd(getRd(line, true))) {
+                        // i
+                        instruction += "0";
+                        instruction += "00000000";
+                        instruction += rs2;
+                    } else {
+                        instruction += "1";
+                        instruction += bR(getRd(line, true), 13);
+                    }
+                } else {
+                    throw new Error("Invalid syntax: andncc requires 3 arguments");
+                }
+                break;
             case "orcc":
                 if (line.iArgs.length === 3) {
 
@@ -295,6 +324,34 @@ function compile(line, parsed) {
                     throw new Error("Invalid syntax: orncc requires 3 arguments");
                 }
                 break;
+            case "xorcc":
+                if (line.iArgs.length === 3) {
+
+                    var rd = getRd(line);
+                    var rs1 = getRs1(line);
+                    var rs2 = getRs2(line);
+
+                    // rd
+                    instruction += rd;
+
+                    // op
+                    instruction += "010111";
+
+                    // rs1
+                    instruction += rs1;
+
+                    if (!Util.isLocAdd(getRd(line, true))) {
+                        // i
+                        instruction += "0";
+                        instruction += "00000000";
+                        instruction += rs2;
+                    } else {
+                        instruction += "1";
+                        instruction += bR(getRd(line, true), 13);
+                    }
+                } else {
+                    throw new Error("Invalid syntax: xorcc requires 3 arguments");
+                }
             // Control
             case "call":
                 if (line.iArgs.length > 1) { throw new Error("Too many argumnets for call instruction."); }

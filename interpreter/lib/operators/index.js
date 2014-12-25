@@ -6,6 +6,8 @@ var Operators = module.exports = {
   , "010001":   "andcc"
   , "010010":   "orcc"
   , "010110":   "orncc"
+  , "010111":   "xorcc"
+  , "011000":   "andncc"
   , "100110":   "srl"
   , "111000":   "jmpl"
   , "000000":   "ld"

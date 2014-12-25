@@ -157,7 +157,7 @@ function s(inp, s, e) {
 }
 
 function getLoc(buff, cIns) {
-    return (parseInt(s(cIns, 19, 31), 2)) / 4;
+    return Util.uncomp(s(cIns, 19, 31)) / 4;
 }
 
 function getSimm13(buff, cIns) {
@@ -197,7 +197,7 @@ function interpret(cIns, buff) {
     }
 
     if (Operators[op] === "jmpl") {
-        var jmp = parseInt(Registers[Util.pad((15).toString(2), 5)], 2);
+        var jmp = Util.uncomp(Registers[Util.pad((15).toString(2), 5)]);
         if (!jmp) {
             ended = true;
         } else {
@@ -221,21 +221,22 @@ function interpret(cIns, buff) {
             // branch
             if (Operators[op] === "branch") {
                 var cond = s(cIns, 3, 6);
-                var sub = parseInt(s(cIns, 10, 31), 2);
-                var loc = (sub / 4) * 32;
+                var sub = Util.uncomp(s(cIns, 10, 31));
+                var loc = sub / 4 * 32;
 
                 // be
                 if (Operators[cond] === "be" && PSR.z.get()) {
                     result += "Calling subrutine located at memory location: " + loc;
-                    Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
+                    Registers[Util.pad((15).toString(2), 5)] = Util.pad(ArcInterpreter.cPosition.toString(2), 32);
                     ArcInterpreter.cPosition = loc;
                     return result;
                 }
 
                 // bneg
                 if (Operators[cond] === "bneg" && PSR.n.get()) {
+                    debugger
                     result += "Calling subrutine located at memory location: " + loc;
-                    Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
+                    Registers[Util.pad((15).toString(2), 5)] = Util.pad(ArcInterpreter.cPosition.toString(2), 32);
                     ArcInterpreter.cPosition = loc;
                     return result;
                 }
@@ -249,10 +250,10 @@ function interpret(cIns, buff) {
 
         // CALL
         case "01":
-            var sub = parseInt(s(cIns, 2, 31), 2);
-            var loc = (sub / 4)* 32;
+            var sub = Util.uncomp(s(cIns, 2, 31));
+            var loc = sub / 4 * 32;
             result += "Calling subrutine located at memory location: " + loc;
-            Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
+            Registers[Util.pad((15).toString(2), 5)] = Util.pad(ArcInterpreter.cPosition.toString(2), 32);
             ArcInterpreter.cPosition = loc;
             return result;
 
@@ -262,32 +263,41 @@ function interpret(cIns, buff) {
               , iBit = cIns[18]
               , c1 = rv(rs1(cIns), 2)
               , c2 = iBit === 0 ? rv(rs2(cIns), 2) : Util.uncomp(s(cIns, 19, 31))
-              , result = null
+              , r = null
               ;
 
             if (Operators[op] === "addcc") {
-                result = Util.bin(c1 + c2);
+                r = Util.bin(c1 + c2);
+            }
+
+            if (Operators[op] === "andncc") {
+                r = Util.comp(Util.bin(c1 & c2));
             }
 
             if (Operators[op] === "andcc") {
-                result = Util.bin(c1 & c2);
+                debugger
+                r = Util.bin(c1 & c2);
             }
 
             if (Operators[op] === "orcc") {
-                result = Util.bin(c1 | c2);
+                r = Util.bin(c1 | c2);
             }
 
             if (Operators[op] === "orncc") {
-                result = Util.comp(Util.pad(c1 | c2))
+                r = Util.comp(Util.bin(c1 | c2));
             }
 
-            if (result === null) {
+            if (Operators[op] === "xorcc") {
+                r = Util.bin(c1 ^ c2);
+            }
+
+            if (r === null) {
                 throw new Error("Invalid arithmetic instruction.");
             }
 
-            Registers[dest] = result;
-            PSR.z.set(result);
-            PSR.n.set(result);
+            Registers[dest] = r;
+            PSR.z.set(r);
+            PSR.n.set(r);
             break;
 
         // MEMORY
@@ -339,9 +349,8 @@ ArcInterpreter.interpret = function (inp) {
 
     ArcInterpreter.cPosition = 0;
     while (!ended) {
-        var cIns = inp.slice(ArcInterpreter.cPosition, ArcInterpreter.cPosition + 32)
-          , result = interpret(cIns, inp)
-          ;
+        var cIns = inp.slice(ArcInterpreter.cPosition, ArcInterpreter.cPosition + 32);
+        var result = interpret(cIns, inp);
 
         output += result ? result + "\n" : "";
     }
