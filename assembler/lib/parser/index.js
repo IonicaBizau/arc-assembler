@@ -1,3 +1,4 @@
+var Util = require("../../../util");
 var mnemonics = {
     "ld": {
         type: "memory"
