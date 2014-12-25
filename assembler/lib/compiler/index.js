@@ -17,7 +17,7 @@ function handleNumber(r, length) {
         return Util.bin(value, length);
     }
 
-    throw new Error("Invalid number " + r);
+    return Util.bin(0, length);
 }
 
 function compile(line, parsed) {
@@ -29,6 +29,14 @@ function compile(line, parsed) {
         if (/^\%r[0-9]\+[a-z]+$/.test(r)) {
             return Util.pad(Util.addBin(
                 bR(r.replace(/\+[a-z]+$/g, "")), bR("[" + r.match(/\+([a-z]+)/)[0] + "]")
+            ), length);
+        }
+
+        // %r0+4
+        if (/^\%r[0-9]\+[0-9]+$/.test(r)) {
+            debugger
+            return Util.pad(
+                Util.addBin(bR(r.replace(/\+[0-9]+$/g, "")), bR(r.match(/\+([0-9]+)/)[0])
             ), length);
         }
 
@@ -64,9 +72,6 @@ function compile(line, parsed) {
             return line.iArgs[0];
         }
         var r = getRs1(line, true);
-        if (!/^\%r[0-9]+$/.test(r)) {
-            return "00000";
-        }
         return bR(r);
     }
 
@@ -78,9 +83,6 @@ function compile(line, parsed) {
             return "00000";
         }
         var r = getRs2(line, true);
-        if (!/^\%r[0-9]+$/.test(r)) {
-            return "00000";
-        }
         return bR(r);
     }
 
