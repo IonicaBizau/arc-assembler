@@ -305,10 +305,11 @@ function compile(line, parsed) {
                 break;
             case "jmpl":
                 if (line.iArgs.length === 2) {
+                debugger
                     var rd = getRd(line);
                     var rs1 = getRs1(line);
                     instruction += rd;
-                    instruction += "1110000";
+                    instruction += "111000";
                     instruction += rs1;
                     instruction += "1";
                     // simm13
