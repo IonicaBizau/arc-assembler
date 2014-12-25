@@ -115,8 +115,10 @@ function parse(lines) {
             console.log("  > Content: " + lValue);
         }
 
-        if (instruction)
+        if (instruction) {
             console.log("  > Instruction: " + instruction);
+            lValue = c.trim();
+        }
 
         if (iArgs.length)
             console.log("  > Instruction Arguments: " + JSON.stringify(iArgs));
