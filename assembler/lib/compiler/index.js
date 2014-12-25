@@ -34,7 +34,6 @@ function compile(line, parsed) {
 
         // %r0+4
         if (/^\%r[0-9]\+[0-9]+$/.test(r)) {
-            debugger
             return Util.pad(
                 Util.addBin(bR(r.replace(/\+[0-9]+$/g, "")), bR(r.match(/\+([0-9]+)/)[0])
             ), length);
