@@ -17,32 +17,56 @@
             <div class="row">
                 <div class="center aligned starter column">
                     <h1 class="ui header">ARC Assembler & Interpreter</h1>
-                    <p>An ARC assembler and an interpreter written in JavaScript.</p>
+                    <p>An ARC assembler and an interpreter written in NodeJS.</p>
                 </div>
             </div>
             <div class="ui grid">
                 <div class="eight wide column">
-                    <div id="editor" class="ui instructive segment">!
-! This program sums two numbers
-!
+                    <div id="editor" class="ui instructive segment">! ------------------------------------------------------- !
+! This program sums the elements from array that is       !
+! located starting with 3000.                             !
+! ------------------------------------------------------- !
+! Used registers                                          !
+! ==============                                          !
+! r1: length                                              !
+! r2: start (3000)                                        !
+! r3: sum of the elements (is initialized with zero)      !
+! r4: the current element                                 !
+! ==============                                          !
+! r1, r2 and r4 are set back to 0 after the loop is done  !
+! ------------------------------------------------------- !
 
         .begin
         .org 2048
+        call init_r
+        call loop
 
-main:   ld [x], %r9                 ! load x into r9
-        ld [y], %r10                ! load y into r10
-        call sum                    ! call sum subrutine
-        st %r11, [z]                ! store the result in z
-        ld [z], %r9
-        jmpl %r15+4, %r0            ! Done
+init_r: ld [length], %r1
+        ld [start], %r2
+        ld [zero], %r3
+        jmpl %r15+4, %r0
 
-sum:    addcc %r9, %r10, %r11       ! sums the registers r9 and r10 into %r11
-        jmpl %r15+4, %r0            ! standard return
+loop:   ld %r2, %r4
+        addcc %r2, 4, %r2
+        addcc %r3, %r4, %r3
+        addcc %r1, -1, %r1
+        be done
+        ba loop
 
-x:      10
-y:      -20
-z:      0
+done:   ld [zero], %r1
+        ld [zero], %r2
+        ld [zero], %r4
+        jmpl %r15+4, %r0
 
+start:  3000
+length: 4
+zero:   0
+
+        .org 3000
+        10
+        20
+        -0xa
+        aH
         .end</div>
                 </div>
                 <div class="eight wide column">
@@ -76,7 +100,7 @@ z:      0
               </div>
                 <div class="row">
                     <div class="center aligned column">
-                    <p><i class="code icon"></i> with JavaScript and <i class="pulse heart icon"></i> by <a href="http://ionicabizau.net" target="blank">Ionică Bizău</a>. Browse the <a href="https://github.com/IonicaBizau/arc-assembler" target="blank">code on <i class="github alternate icon"></i> GitHub</a>.</p>
+                    <p><i class="code icon"></i> with NodeJS and <i class="pulse heart icon"></i> by <a href="http://ionicabizau.net" target="blank">Ionică Bizău</a>. Browse the <a href="https://github.com/IonicaBizau/arc-assembler" target="blank">code on <i class="github alternate icon"></i> GitHub</a>.</p>
                 </div>
             </div>
         </main>
