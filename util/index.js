@@ -39,3 +39,7 @@ Util.bin = function (input, l) {
     }
     return Util.comp(Util.bin(Math.abs(input + 1), l));
 };
+
+Util.isNumber = function (c) {
+    return /(^\-?[0-9]+$)|(^\-?0x)|H$/.test(c);
+}

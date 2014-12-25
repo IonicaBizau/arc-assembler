@@ -411,7 +411,7 @@ function compile(line, parsed) {
         }
     }
 
-    if (/(^[0-9]+$)|(^0x)|H$/.test(line.c)) {
+    if (Util.isNumber(line.c)) {
         instruction = handleNumber(line.c, 32);
     }
 
