@@ -4,8 +4,6 @@ var Path = require("path")
   , Registers = {}
   ;
 
-
-
 function initRegisters() {
     Registers = {
         "00000": Util.pad(0, 32)
@@ -109,41 +107,67 @@ var RegisterMap = ArcInterpreter.registerMap = {
 };
 
 var PSR = {
-    n: {
-        set: function (v) {
-            var value = parseInt(v[0]);
-            Registers.PSR = Registers.PSR.split("").map(function (c, i) {
-                if (i === 8) {
-                    if (value === 1) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+    update: function (v, tN) {
+
+        var setN = parseInt(v[0])
+          , setZ = tN === 0
+          , setC = true // TODO
+          , setV = Math.abs(tN) >= Math.pow(2, 31)
+          ;
+
+        Registers.PSR = Registers.PSR.split("").map(function (c, i) {
+
+            // n
+            if (i === 8) {
+                if (setN) {
+                    return 1;
+                } else {
+                    return 0;
                 }
-                return c;
-            }).join("");
-        }
-      , get: function (v) {
-            return parseInt(Registers.PSR[8]);
-        }
+            }
+
+            // z
+            if (i === 9) {
+                if (setZ) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+
+            // c
+            if (i === 10) {
+                if (setC) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+
+            // v
+            if (i === 11) {
+                if (setV) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+
+            return c;
+        }).join("");
+
     }
-  , z: {
-        set: function (v) {
-            var value = Util.uncomp(v);
-            Registers.PSR = Registers.PSR.split("").map(function (c, i) {
-                if (i === 9) {
-                    if (value === 0) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-                return c;
-            }).join("");
-        }
-      , get: function (v) {
-            return parseInt(Registers.PSR[9]);
-        }
+  , n: function () {
+        return parseInt(Registers.PSR[8]);
+    }
+  , z: function () {
+        return parseInt(Registers.PSR[9]);
+    }
+  , c: function () {
+        return parseInt(Registers.PSR[10]);
+    }
+  , v: function () {
+        return parseInt(Registers.PSR[11]);
     }
 };
 
@@ -225,18 +249,42 @@ function interpret(cIns, buff) {
                 var loc = sub / 4 * 32;
 
                 // be
-                if (Operators[cond] === "be" && PSR.z.get()) {
+                if (Operators[cond] === "be" && PSR.z()) {
+                    result += "Calling subrutine located at memory location: " + loc;
+                    Registers[Util.pad((15).toString(2), 5)] = Util.pad(0, 32);
+                    ArcInterpreter.cPosition = loc;
+                    return result;
+                }
+
+                // bneg
+                if (Operators[cond] === "bneg" && PSR.n()) {
                     result += "Calling subrutine located at memory location: " + loc;
                     Registers[Util.pad((15).toString(2), 5)] = Util.pad(ArcInterpreter.cPosition.toString(2), 32);
                     ArcInterpreter.cPosition = loc;
                     return result;
                 }
 
-                // bneg
-                if (Operators[cond] === "bneg" && PSR.n.get()) {
-                    debugger
+                // bcs
+                if (Operators[cond] === "bcs" && PSR.c()) {
                     result += "Calling subrutine located at memory location: " + loc;
                     Registers[Util.pad((15).toString(2), 5)] = Util.pad(ArcInterpreter.cPosition.toString(2), 32);
+                    ArcInterpreter.cPosition = loc;
+                    return result;
+                }
+
+                // bvs
+                if (Operators[cond] === "bvs" && PSR.v()) {
+                    result += "Calling subrutine located at memory location: " + loc;
+                    Registers[Util.pad((15).toString(2), 5)] = Util.pad(ArcInterpreter.cPosition.toString(2), 32);
+                    ArcInterpreter.cPosition = loc;
+                    return result;
+                }
+
+                // ba
+                if (Operators[cond] === "ba") {
+                    debugger
+                    result += "Calling subrutine located at memory location: " + loc;
+                    Registers[Util.pad((15).toString(2), 5)] = Util.pad("0", 32);
                     ArcInterpreter.cPosition = loc;
                     return result;
                 }
@@ -264,31 +312,33 @@ function interpret(cIns, buff) {
               , c1 = rv(rs1(cIns), 2)
               , c2 = iBit === 0 ? rv(rs2(cIns), 2) : Util.uncomp(s(cIns, 19, 31))
               , r = null
+              , tN = null
               ;
 
             if (Operators[op] === "addcc") {
-                r = Util.bin(c1 + c2);
+                if (c1 + c2 === 0)
+                debugger
+                r = Util.bin(tN = c1 + c2);
             }
 
             if (Operators[op] === "andncc") {
-                r = Util.comp(Util.bin(c1 & c2));
+                r = Util.comp(Util.bin(tN = c1 & c2));
             }
 
             if (Operators[op] === "andcc") {
-                debugger
-                r = Util.bin(c1 & c2);
+                r = Util.bin(tN = c1 & c2);
             }
 
             if (Operators[op] === "orcc") {
-                r = Util.bin(c1 | c2);
+                r = Util.bin(tN = c1 | c2);
             }
 
             if (Operators[op] === "orncc") {
-                r = Util.comp(Util.bin(c1 | c2));
+                r = Util.comp(Util.bin(tN = c1 | c2));
             }
 
             if (Operators[op] === "xorcc") {
-                r = Util.bin(c1 ^ c2);
+                r = Util.bin(tN = c1 ^ c2);
             }
 
             if (r === null) {
@@ -296,8 +346,7 @@ function interpret(cIns, buff) {
             }
 
             Registers[dest] = r;
-            PSR.z.set(r);
-            PSR.n.set(r);
+            PSR.update(r, tN);
             break;
 
         // MEMORY
