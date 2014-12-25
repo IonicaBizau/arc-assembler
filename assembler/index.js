@@ -23,4 +23,5 @@ Fs.readFile(INPUT_FILE, "utf-8", function (err, lines) {
     outputStream.write("#!env/arc-int\n");
     outputStream.write(new Buffer(result.mCode));
     outputStream.end();
+    Fs.chmodSync(OUTPUT_FILE, 0755);
 });
