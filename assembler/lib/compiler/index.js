@@ -4,20 +4,17 @@ function handleNumber(r, length) {
     var value = ""
     // hex
     if (/^\-?0x|H$/.test(r)) {
-        value = Util.pad(parseInt(r.replace("-", ""), 16).toString(2), length);
+        value = parseInt(r.replace("-", ""), 16);
         if (r[0] === "-") {
-            value = Util.comp(value);
+            value = -value;
         }
-        return value;
+        return Util.bin(value, length);
     }
 
     // Int
     if (/[0-9]+/.test(r)) {
-        value = Util.pad(Math.abs(r).toString(2), length);
-        if (r[0] === "-") {
-            value = Util.comp(value);
-        }
-        return value;
+        value = parseInt(r);
+        return Util.bin(value, length);
     }
 
     throw new Error("Invalid number " + r);
@@ -194,14 +191,15 @@ function compile(line, parsed) {
                     // rs1
                     instruction += rs1;
 
-                    if (!Util.isLocAdd(getRd(line, true))) {
-                        // i
+                    // Add two registers
+                    if (Util.isRegister(getRs2(line, true))) {
                         instruction += "0";
                         instruction += "00000000";
                         instruction += rs2;
                     } else {
+                        // Add a register and a constant
                         instruction += "1";
-                        instruction += bR(getRd(line, true), 13);
+                        instruction += handleNumber(getRs2(line, true), 13);
                     }
                 } else {
                     throw new Error("Invalid syntax: addcc requires 3 arguments");
