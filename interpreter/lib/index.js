@@ -256,29 +256,36 @@ function interpret(cIns, buff) {
 
         // ARITHMETIC
         case "10":
+            var dest = rd(cIns)
+              , iBit = cIns[18]
+              , c1 = rv(rs1(cIns), 2)
+              , c2 = iBit === 0 ? rv(rs2(cIns), 2) : Util.uncomp(s(cIns, 18, 31))
+              , result = null
+              ;
+
             if (Operators[op] === "addcc") {
-                var r = Registers[rd(cIns)] = Util.bin(rv(rs1(cIns), 2) + rv(rs2(cIns), 2))
-                PSR.z.set(r);
-                PSR.n.set(r);
+                result = Util.bin(c1 + c2);
             }
 
             if (Operators[op] === "andcc") {
-                var r = Registers[rd(cIns)] = Util.bin(rv(rs1(cIns), 2) & rv(rs2(cIns), 2))
-                PSR.z.set(r);
-                PSR.n.set(r);
+                result = Util.bin(c1 & c2);
             }
 
             if (Operators[op] === "orcc") {
-                var r = Registers[rd(cIns)] = Util.bin(rv(rs1(cIns), 2) | rv(rs2(cIns), 2))
-                PSR.z.set(r);
-                PSR.n.set(r);
+                result = Util.bin(c1 | c2);
             }
 
             if (Operators[op] === "orncc") {
-                var r = Registers[rd(cIns)] = Util.comp(Util.pad((rv(rs1(cIns), 2) | rv(rs2(cIns), 2))));
-                PSR.z.set(r);
-                PSR.n.set(r);
+                result = Util.comp(Util.pad(c1 | c2))
             }
+
+            if (result === null) {
+                throw new Error("Invalid arithmetic instruction.");
+            }
+
+            Registers[dest] = result;
+            PSR.z.set(result);
+            PSR.n.set(result);
             break;
 
         // MEMORY
