@@ -50,15 +50,16 @@ function initRegisters() {
     }
 
     for (var r in Registers) {
-        if (r === "00000") { continue; }
         (function (r) {
             _r[r] = Registers[r];
             delete Registers[r];
             Object.defineProperty(Registers, r, {
                 writeable: true
               , set: function (newValue) {
-                    _r[r] = newValue;
-                    ArcInterpreter.rSet(">> Register " + RegisterMap[r] + " was set: " + Util.uncomp(newValue));
+                    if (r !== "00000") {
+                        _r[r] = newValue;
+                        ArcInterpreter.rSet(">> Register " + RegisterMap[r] + " was set: " + Util.uncomp(newValue));
+                    }
                 }
               , get: function () {
                     ArcInterpreter.rSet("<< Getting value from register: " + RegisterMap[r]);
