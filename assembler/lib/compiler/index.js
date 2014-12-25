@@ -395,14 +395,14 @@ function compile(line, parsed) {
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
                 break;
             case "bvs":
-                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bneg instruction."); }
+                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bvs instruction."); }
                 instruction += "0";
                 instruction += "0111";
                 instruction += "010";
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
                 break;
             case "ba":
-                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bneg instruction."); }
+                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for ba instruction."); }
                 instruction += "0";
                 instruction += "1000";
                 instruction += "010";
