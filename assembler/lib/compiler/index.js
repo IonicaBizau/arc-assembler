@@ -26,17 +26,18 @@ function compile(line, parsed) {
         length = length || 5;
 
         // %r0+x
-        if (/^\%r[0-9]\+[a-z]+$/.test(r)) {
+        if (/^\%r[0-9]+\+[a-z]+$/.test(r)) {
             return Util.pad(Util.addBin(
                 bR(r.replace(/\+[a-z]+$/g, "")), bR("[" + r.match(/\+([a-z]+)/)[0] + "]")
             ), length);
         }
 
         // %r0+4
-        if (/^\%r[0-9]\+[0-9]+$/.test(r)) {
-            return Util.pad(
-                Util.addBin(bR(r.replace(/\+[0-9]+$/g, "")), bR(r.match(/\+([0-9]+)/)[0])
-            ), length);
+        if (/^\%r[0-9]+\+[0-9]+$/.test(r)) {
+            return bR(r.replace(/\+[0-9]+$/g, ""), length);
+            //return Util.pad(
+            //    Util.addBin(bR(r.replace(/\+[0-9]+$/g, "")), bR(r.match(/\+([0-9]+)/)[0])
+            //), length);
         }
 
         // %r0
@@ -105,7 +106,6 @@ function compile(line, parsed) {
                 instruction += "01";
                 break;
         }
-
 
         switch (line.instruction) {
 
@@ -304,13 +304,17 @@ function compile(line, parsed) {
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 30);
                 break;
             case "jmpl":
-                if (/^jmpl \%r[0-9]+\+[0-9]+\,\ ?\%r[0-9]+$/.test(line.c)) {
-                    instruction += (("00000" + eval(line.iArgs[1].replace("%r", "")).toString(2)).slice(-5));
-                    instruction += ("111000");
-                    instruction += (("00000" + parseInt(line.iArgs[0].replace(/\%r|\+[0-9]+/g, "")).toString(2)).slice(-5));
-                    instruction += ("1");
+                if (line.iArgs.length === 2) {
+                    var rd = getRd(line);
+                    var rs1 = getRs1(line);
+                    instruction += rd;
+                    instruction += "1110000";
+                    instruction += rs1;
+                    instruction += "1";
                     // simm13
-                    instruction += (("0000000000000" + parseInt(line.iArgs[0].match(/\+([0-9]+)/)).toString(2)).slice(-13));
+                    instruction += Util.bin(handleNumber(line.iArgs[0].match(/\+([0-9]+)/)), 13);
+                } else {
+                    throw new Error("jmpl requires two arguments");
                 }
                 break;
             case "be":
