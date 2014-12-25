@@ -50,6 +50,7 @@ function initRegisters() {
     }
 
     for (var r in Registers) {
+        if (r === "00000") { continue; }
         (function (r) {
             _r[r] = Registers[r];
             delete Registers[r];
