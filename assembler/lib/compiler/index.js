@@ -74,6 +74,9 @@ function compile(line, parsed) {
         if (raw === true) {
             return line.iArgs[1];
         }
+        if (line.iArgs.length <= 2) {
+            return "00000";
+        }
         var r = getRs2(line, true);
         if (!/^\%r[0-9]+$/.test(r)) {
             return "00000";
@@ -120,7 +123,6 @@ function compile(line, parsed) {
 
                     // rs1
                     instruction += rs1;
-
 
                     if (!Util.isLocAdd(getRs1(line, true))) {
                         // i
