@@ -290,9 +290,15 @@ function interpret(cIns, buff) {
 
         // MEMORY
         case "11":
+            var iBit = cIns[18];
 
             if (Operators[op] === "ld") {
-                Registers[rd(cIns)] = getSimm13(buff, cIns);
+                if (iBit === 0) {
+                    var sAddress = Util.uncomp(Registers[rs1(cIns)]) * 8;
+                    Registers[rd(cIns)] = s(buff.slice(sAddress, sAddress + 32), 0, 31);
+                } else {
+                    Registers[rd(cIns)] = getSimm13(buff, cIns);
+                }
             }
 
             if (Operators[op] === "st") {
