@@ -28,7 +28,7 @@ Util.comp = function (input) {
 
 Util.uncomp = function (input) {
     if (input[0] === "1") {
-        return -Util.uncomp(Util.comp(input));
+        return -Util.uncomp(Util.comp(input)) - 1;
     }
     return parseInt(input, 2);
 };
@@ -37,5 +37,5 @@ Util.bin = function (input, l) {
     if (input >= 0) {
         return Util.pad(input.toString(2), l);
     }
-    return Util.comp(Util.bin(Math.abs(input), l));
+    return Util.comp(Util.bin(Math.abs(input + 1), l));
 };
