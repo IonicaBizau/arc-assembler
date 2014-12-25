@@ -123,6 +123,10 @@ function parse(lines) {
         if (iArgs.length)
             console.log("  > Instruction Arguments: " + JSON.stringify(iArgs));
 
+        if (/(^[0-9]+$)|(^0x)|H$/.test(c.trim())) {
+            lValue = c.trim();
+        }
+
         cLine.op = op;
         cLine._c = c;
         cLine.label = label;
@@ -167,10 +171,9 @@ function parse(lines) {
             }
             cLine.address = result._cAddress;
 
-            if (cLine.label || cLine.instruction) {
+            if (cLine.label || cLine.instruction || /(^[0-9]+$)|(^0x)|H$/.test(cLine.c)) {
                 result._cAddress += 4;
             }
-
         }
 
         result.lines.push(cLine);

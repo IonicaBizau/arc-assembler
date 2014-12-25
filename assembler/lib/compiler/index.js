@@ -354,7 +354,7 @@ function compile(line, parsed) {
         }
     }
 
-    if (line.label && !line.instruction) {
+    if (/(^[0-9]+$)|(^0x)|H$/.test(line.c)) {
         instruction = handleNumber(line.c, 32);
     }
 
