@@ -282,7 +282,6 @@ function interpret(cIns, buff) {
 
                 // ba
                 if (Operators[cond] === "ba") {
-                    debugger
                     result += "Calling subrutine located at memory location: " + loc;
                     Registers[Util.pad((15).toString(2), 5)] = Util.pad("0", 32);
                     ArcInterpreter.cPosition = loc;
@@ -316,8 +315,6 @@ function interpret(cIns, buff) {
               ;
 
             if (Operators[op] === "addcc") {
-                if (c1 + c2 === 0)
-                debugger
                 r = Util.bin(tN = c1 + c2);
             }
 
