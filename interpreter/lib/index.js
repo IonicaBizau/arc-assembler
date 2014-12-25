@@ -331,6 +331,10 @@ ArcInterpreter.interpret = function (inp) {
         output += result ? result + "\n" : "";
     }
 
+    for (var i = 0; i < inp.length; i += 32) {
+        console.log(s(inp.slice(i, i + 32), 0, 31).match(/.{1,4}/g).join(" "));
+    }
+
     return output.trim();
 };
 
