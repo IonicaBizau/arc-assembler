@@ -1,0 +1,29 @@
+#!/bin/bash
+# Move me in the parent directory.
+
+cd node-arc
+./build
+cd ..
+
+echo "Updating gh-pages branch ..."
+cp -r node-arc/clients .
+
+cd node-arc
+
+echo "Checking out gh-pages branch ..."
+git checkout gh-pages
+
+echo "Updating files ..."
+cp -r ../clients/* .
+
+echo "Committing ..."
+git add . -A
+git commit -m "Updated browser version."
+
+echo "Going back to the master branch."
+git checkout master
+
+git push --all
+
+echo "Cleaning up ..."
+rm -rf ../clients
