@@ -155,7 +155,7 @@ function s(inp, s, e) {
 }
 
 function getLoc(buff, cIns) {
-    return (parseInt(s(cIns, 19, 31), 2) - 2048) / 4;
+    return (parseInt(s(cIns, 19, 31), 2)) / 4;
 }
 
 function getSimm13(buff, cIns) {
@@ -219,12 +219,12 @@ function interpret(cIns, buff) {
             // branch
             if (Operators[op] === "branch") {
                 var cond = s(cIns, 3, 6);
-                var sub = parseInt(s(cIns, 10, 31), 2) - 2048;
+                var sub = parseInt(s(cIns, 10, 31), 2);
                 var loc = (sub / 4) * 32;
 
                 // be
                 if (Operators[cond] === "be" && PSR.z.get()) {
-                    result += "Calling subrutine located at memory location: " + (loc + 2048);
+                    result += "Calling subrutine located at memory location: " + loc;
                     Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
                     ArcInterpreter.cPosition = loc;
                     return result;
@@ -232,7 +232,7 @@ function interpret(cIns, buff) {
 
                 // bneg
                 if (Operators[cond] === "bneg" && PSR.n.get()) {
-                    result += "Calling subrutine located at memory location: " + (loc + 2048);
+                    result += "Calling subrutine located at memory location: " + loc;
                     Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
                     ArcInterpreter.cPosition = loc;
                     return result;
@@ -247,9 +247,9 @@ function interpret(cIns, buff) {
 
         // CALL
         case "01":
-            var sub = parseInt(s(cIns, 2, 31), 2) - 2048;
+            var sub = parseInt(s(cIns, 2, 31), 2);
             var loc = (sub / 4)* 32;
-            result += "Calling subrutine located at memory location: " + (loc + 2048);
+            result += "Calling subrutine located at memory location: " + loc;
             Registers[Util.pad((15).toString(2), 5)] = Util.pad(parseInt(ArcInterpreter.cPosition).toString(2), 32);
             ArcInterpreter.cPosition = loc;
             return result;
@@ -291,7 +291,7 @@ function interpret(cIns, buff) {
             if (Operators[op] === "st") {
                 var loc = getLoc(buff, cIns) * 32;
                 var rdc = rv(rd(cIns));
-                result += ">> Copying content from register " + RegisterMap[rd(cIns)] + " to memory location: " + (loc + 2048);
+                result += ">> Copying content from register " + RegisterMap[rd(cIns)] + " to memory location: " + loc;
                 for (var i = 0; i < 32; ++i) {
                     buff[loc + i] = parseInt(rdc[i]);
                 }
