@@ -1,14 +1,15 @@
 #!/bin/bash
 # Move me in the parent directory.
 
-cd node-arc
+ARC_DIR="arc-assembler"
+cd $ARC_DIR
 ./browser
 cd ..
 
 echo "Updating gh-pages branch ..."
-cp -r node-arc/clients .
+cp -r $ARC_DIR/clients .
 
-cd node-arc
+cd $ARC_DIR
 
 echo "Checking out gh-pages branch ..."
 git checkout gh-pages
