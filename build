@@ -1,22 +1,29 @@
 #!/bin/bash
+# Move me in the parent directory.
 
-ASM_BR_PATH="assembler/browser/arc-assembler.js"
-INT_BR_PATH="interpreter/browser/arc-interpreter.js"
+cd node-arc
+./browser
+cd ..
 
-echo "Building browser version for ARC assembler."
-browserify assembler/lib/index.js -o $ASM_BR_PATH
+echo "Updating gh-pages branch ..."
+cp -r node-arc/clients .
 
-echo "Building browser version for ARC interpreter."
-browserify interpreter/lib/index.js -o $INT_BR_PATH
+cd node-arc
 
-echo "Running minify tasks"
-uglifyjs $ASM_BR_PATH -o $ASM_BR_PATH
-uglifyjs $INT_BR_PATH -o $INT_BR_PATH
+echo "Checking out gh-pages branch ..."
+git checkout gh-pages
 
-echo "Updating client script: arc-assembler.js"
-cp $ASM_BR_PATH clients/lib/arc-assembler.js
+echo "Updating files ..."
+cp -r ../clients/* .
 
-echo "Updating client script: arc-interpreter.js"
-cp $INT_BR_PATH clients/lib/arc-interpreter.js
+echo "Committing ..."
+git add . -A
+git commit -m "Updated browser version."
 
-git commit -m 'Updated client files' .
+echo "Going back to the master branch."
+git checkout master
+
+git push --all
+
+echo "Cleaning up ..."
+rm -rf ../clients
