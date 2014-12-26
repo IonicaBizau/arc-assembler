@@ -17,6 +17,25 @@ ArcAssembler.compile = function (lines) {
         lines = lines.split("\n");
     }
     var parsed = Parse(lines);
+    var size = Math.max.apply(null, parsed.lines.map(function (c) { return c.address || -1; }));
+    result.mCode = [];
+    for (var i = 0; i < size * 8; ++i) {
+        result.mCode.push(0);
+    }
+
+
+    function setBits(sAddress, bits) {
+        if (typeof bits === "string") {
+            bits = bits.split("").map(function (c) {
+                return parseInt(c);
+            });
+        }
+
+        for (var i = 0; i < bits.length; ++i) {
+            result.mCode[sAddress * 8 + i] = bits[i];
+        }
+    }
+
     parsed.lines.forEach(function (c, i) {
         if (!c.c) {
             return;
@@ -27,11 +46,7 @@ ArcAssembler.compile = function (lines) {
             code: ins
           , line: i + 1
         });
-        result.mCode = result.mCode.concat(
-            ins.split("").map(function (c) {
-                return parseInt(c);
-            })
-        );
+        setBits(c.address, ins);
     });
     return result;
 };
