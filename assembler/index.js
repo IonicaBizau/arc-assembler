@@ -15,6 +15,11 @@ Fs.readFile(INPUT_FILE, "utf-8", function (err, lines) {
         console.log(c.code.match(/.{1,4}/g).join(" ") + " << Line " + c.line);
     });
 
+    console.log("---- Full machine code ----");
+    for (var i = 0; i < result.mCode.length; i += 32) {
+        console.log(result.mCode.slice(i, i + 32).join("").match(/.{1,4}/g).join(" "));
+    }
+
     outputStream.write(new Buffer(result.mCode));
     outputStream.end();
 });
