@@ -57,15 +57,18 @@ var mnemonics = {
 const ALL_MNEMONICS = "\\b(?:" + Object.keys(mnemonics).join("|") + ")\\b";
 
 function parse(lines) {
+
     var result = {
         lines: []
       , labels: []
       , addresses: {}
-      , _sAddress: 0
-      , _cAddress: -1
+      , _cAddress: 0
     };
 
     var lastLabel = null;
+    var asEnded = false;
+    var asStarted = false;
+
     for (var i in lines) {
         var c = lines[i];
         c = c.replace(/\!.*$/g, "");
@@ -126,36 +129,51 @@ function parse(lines) {
         cLine.oArgs = oArgs;
         cLine.c = lValue;
 
-        if (instruction) {
-            if (!mnemonics[instruction]) {
-                throw new Error("Invalid instruction: " + instruction);
+        // Pseudo operation: begin
+        if (cLine.op === "begin") {
+            asStarted = true;
+            asEnded = false;
+        }
+
+        // Pseudo operation: end
+        if (cLine.op === "end") {
+            asEnded = true;
+        }
+
+        if (asStarted && !asEnded) {
+
+            // Check instruction
+            if (instruction) {
+                if (!mnemonics[instruction]) {
+                    throw new Error("Invalid instruction: " + instruction);
+                }
+                cLine.type = mnemonics[instruction].type
             }
-            cLine.type = mnemonics[instruction].type
-        }
 
-        if (result._cAddress === -1 && cLine.label === "main") {
-            result._cAddress = result._sAddress;
-        }
-
-        if (cLine.op === "org") {
-            result._sAddress = parseInt(oArgs[0]);
-            if (!(result._sAddress >= 0)) {
-                throw new Error(".org value should be positive integer");
+            // Pseudo operation: org
+            if (cLine.op === "org") {
+                result._cAddress = parseInt(oArgs[0]);
+                if (!(result._cAddress >= 0)) {
+                    throw new Error(".org value should be positive integer");
+                }
             }
-        }
 
-        if (cLine.label && !result.addresses[cLine.label]) {
-            result.addresses[cLine.label] = {
-                address: result._cAddress
-            };
-        }
+            if (cLine.label && !result.addresses[cLine.label]) {
+                result.addresses[cLine.label] = {
+                    address: result._cAddress
+                };
+            }
+            cLine.address = result._cAddress;
 
-        if (cLine.c && result._cAddress !== -1) {
-            result._cAddress += 4;
+            if (cLine.label || cLine.instruction) {
+                result._cAddress += 4;
+            }
+
         }
 
         result.lines.push(cLine);
     }
+
     return result;
 }
 
