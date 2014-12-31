@@ -1,33 +1,21 @@
 // Dependencies
-var Fs = require("fs")
-  , ArcAssembler = require("../lib")
-  ;
+var ArcAssembler = require("../lib");
 
-// Constants
-const OUTPUT_FILE = __dirname + "/../out"
-    , INPUT_FILE = __dirname + "/Test.asm"
-    ;
+// Compile input
+var result = ArcAssembler.compile(
+           "! Sum of two numbers"
+  + "\n" + "! This is a comment"
+  + "\n" + "     .begin"
+  + "\n" + "     .org 2048"
+  + "\n" + "     ld [x], %r1"
+  + "\n" + "     ld [y], %r2"
+  + "\n" + "     addcc %r1, %r2, %r3"
+  + "\n" + "     jmpl %r15+4, %r0"
+  + "\n" + "x:   2"
+  + "\n" + "y:   0xa"
+);
 
-// Create the write stream
-var outputStream = Fs.createWriteStream(OUTPUT_FILE);
-
-// Read the input file content
-Fs.readFile(INPUT_FILE, "utf-8", function (err, content) {
-    if (err) throw err;
-
-    // Compile the input
-    var result = ArcAssembler.compile(content);
-
-    // Show some output
-    result.raw.forEach(function (c) {
-        console.log(c.code.match(/.{1,4}/g).join(" ") + " << Line " + c.line);
-    });
-
-    // Write things in the output stream
-    outputStream.write("#!/usr/bin/env arc-int");
-    outputStream.write(new Buffer(result.mCode));
-    outputStream.end();
-
-    // Make the file executable
-    Fs.chmodSync(OUTPUT_FILE, 0755);
+// Show some output
+result.raw.forEach(function (c) {
+    console.log(c.code.match(/.{1,4}/g).join(" ") + " << Line " + c.line);
 });
