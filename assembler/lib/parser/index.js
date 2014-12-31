@@ -9,6 +9,15 @@ var mnemonics = {
         type: "memory"
     }
 
+    // Output
+    // TODO They have the memory format.
+  , "printn": {
+        type: "memory"
+    }
+  , "printc": {
+        type: "memory"
+    }
+
     // SETHI/BRANCH
   , "sethi": {
         type: "sethi"

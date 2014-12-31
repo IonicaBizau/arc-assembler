@@ -172,6 +172,65 @@ function compile(line, parsed) {
                     throw new Error("Invalid syntax: " + line.c);
                 }
                 break;
+            // Print number
+            case "printn":
+                if (line.iArgs.length !== 2) {
+                    throw new Error("Invalid syntax: " + line.c);
+                }
+
+                var rd = getRd(line);
+                var rs1 = getRs1(line);
+                var rs2 = getRs2(line);
+
+                if (Util.isLocAdd(getRd(line, true))) {
+                    rd = getRs1(line);
+                    rs1 = Util.pad("", 5);
+                }
+
+                // rd
+                instruction += rd;
+
+                // op
+                instruction += "001000";
+
+                // rs1
+                instruction += rs1;
+
+                // i
+                instruction += "0";
+                instruction += "00000000";
+                instruction += rs2;
+                break;
+
+            // Print char
+            case "printc":
+                if (line.iArgs.length !== 1) {
+                    throw new Error("Invalid syntax: " + line.c);
+                }
+
+                var rd = getRd(line);
+                var rs1 = getRs1(line);
+                var rs2 = getRs2(line);
+
+                if (Util.isLocAdd(getRd(line, true))) {
+                    rd = getRs1(line);
+                    rs1 = Util.pad("", 5);
+                }
+
+                // rd
+                instruction += rd;
+
+                // op
+                instruction += "001001";
+
+                // rs1
+                instruction += rs1;
+
+                // i
+                instruction += "0";
+                instruction += "00000000";
+                instruction += rs2;
+                break;
 
             // Arithmetic
             case "addcc":

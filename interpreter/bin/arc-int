@@ -26,14 +26,21 @@ Fs.readFile(INPUT_FILE, function (err, buff) {
     // Remove the env things
     buff = buff.slice(22);
 
-    // Interpret
-    console.log(ArcInterpreter.interpret(buff));
-    console.log("--------------");
-    console.log("Registers: ");
-    var reg = {};
-    Object.keys(ArcInterpreter.r).forEach(function (c, i) {
-        reg[ArcInterpreter.registerMap[c]] = ArcInterpreter.r[c];
-    });
-    console.log(JSON.stringify(reg, null, 4));
+    var result = ArcInterpreter.interpret(buff);
+
+    if (process.argv[3] === "-v") {
+        console.log(result);
+    }
+
+    if ((process.argv[4] || process.argv[3]) === "-r") {
+        // Interpret
+        console.log("--------------");
+        console.log("Registers: ");
+        var reg = {};
+        Object.keys(ArcInterpreter.r).forEach(function (c, i) {
+            reg[ArcInterpreter.registerMap[c]] = ArcInterpreter.r[c];
+        });
+        console.log(JSON.stringify(reg, null, 4));
+    }
 });
 
