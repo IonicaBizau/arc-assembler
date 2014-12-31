@@ -1,6 +1,6 @@
 {
   "name": "arc-int",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An ARC interpreter written in Node.JS.",
   "main": "lib/index.js",
   "bin": "./bin/arc-int",
