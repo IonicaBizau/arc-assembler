@@ -1,13 +1,19 @@
+// Window process
+window.Process = {
+    stdout: {
+        write: function (c) {
+            window.onStdOutWrite(c);
+        }
+    }
+};
+
 $(document).ready(function () {
+
     function compileAndUpdateMCode(showErr) {
         $("pre.machine-code,pre.result,pre.registers").empty();
         var stdout = "";
-        window.Process = {
-            stdout: {
-                write: function (c) {
-                    stdout += c;
-                }
-            }
+        window.onStdOutWrite = function (c) {
+            stdout += c;
         };
 
         try {
