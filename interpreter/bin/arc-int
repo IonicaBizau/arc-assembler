@@ -8,8 +8,12 @@ var Fs = require("fs")
 
 // Constants
 const INPUT_FILE = Path.resolve(process.cwd() + "/" + process.argv[2])
-    , HELP = "Usage: arc-int <path/to/binary/file>"
+    , HELP = "Usage: arc-int <path/to/binary/file> [options]"
          + "\n"
+         + "\nOptions:"
+         + "\n  -h, --help                          Displays this help."
+         + "\n  -v                                  Displays verbose output."
+         + "\n  -r                                  Displays the final state of the registers."
          + "\nDocumentation can be found at https://github.com/IonicaBizau/arc-assembler"
     ;
 
