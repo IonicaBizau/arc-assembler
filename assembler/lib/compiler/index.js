@@ -174,7 +174,7 @@ function compile(line, parsed) {
                 break;
             // Print number
             case "printn":
-                if (line.iArgs.length !== 2) {
+                if (line.iArgs.length !== 1) {
                     throw new Error("Invalid syntax: " + line.c);
                 }
 
