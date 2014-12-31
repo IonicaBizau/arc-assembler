@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "An ARC assembler written in Node.JS.",
   "main": "lib/index.js",
-  "bin": {
-    "arc-asm": "index.js"
-  },
+  "bin": "./bin/arc-asm",
   "scripts": {
     "test": "node test; ./bin/arc-asm -s test/Test.asm -o ./out"
   },
