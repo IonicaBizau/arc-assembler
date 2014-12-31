@@ -14,9 +14,6 @@
     "arc",
     "interpreter"
   ],
-  "dependencies": {
-      "yargs": "1.3.3"
-  },
   "author": "Ionică Bizău <bizauionica@gmail.com>",
   "license": "MIT",
   "bugs": {

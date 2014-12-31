@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+
+// Dependencies
+var Fs = require("fs")
+  , Path = require("path")
+  , ArcInterpreter = require("../lib")
+  ;
+
+// Constants
+const INPUT_FILE = Path.resolve(process.cwd() + "/" + process.argv[2])
+    , HELP = "Usage: arc-int <path/to/binary/file>"
+         + "\n"
+         + "\nDocumentation can be found at https://github.com/IonicaBizau/arc-assembler"
+    ;
+
+// Invalid data
+if (!process.argv[2]) {
+    console.log(HELP);
+    process.exit(1);
+}
+
+// Read the input file
+Fs.readFile(INPUT_FILE, function (err, buff) {
+    if (err) { throw err; }
+
+    // Remove the env things
+    buff = buff.slice(22);
+
+    // Interpret
+    console.log(ArcInterpreter.interpret(buff));
+    console.log("--------------");
+    console.log("Registers: ");
+    var reg = {};
+    Object.keys(ArcInterpreter.r).forEach(function (c, i) {
+        reg[ArcInterpreter.registerMap[c]] = ArcInterpreter.r[c];
+    });
+    console.log(JSON.stringify(reg, null, 4));
+});
+
