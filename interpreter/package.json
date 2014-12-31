@@ -1,6 +1,6 @@
 {
   "name": "arc-int",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "An ARC interpreter written in Node.JS.",
   "main": "lib/index.js",
   "bin": "./bin/arc-int",
@@ -16,7 +16,7 @@
     "interpreter"
   ],
   "dependencies": {
-    "arc-util": "*"
+    "arc-util": "2.1.0"
   },
   "author": "Ionică Bizău <bizauionica@gmail.com>",
   "license": "MIT",
