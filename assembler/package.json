@@ -7,7 +7,7 @@
     "arc-asm": "index.js"
   },
   "scripts": {
-    "test": "node test"
+    "test": "node test; ./bin/arc-asm -s test/Test.asm -o ./out"
   },
   "repository": {
     "type": "git",
