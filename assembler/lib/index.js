@@ -1,11 +1,54 @@
+// Dependencies
 var Parse = require("./parser")
   , Compile = require("./compiler")
   , Util = require("arc-util")
   ;
 
+// Constructor
 var ArcAssembler = module.exports = {};
+
+
+/**
+ * parse
+ * Parses provided lines of assembly code.
+ *
+ * @name parse
+ * @function
+ * @param {Array} lines The input lines.
+ * @return {Object} An object containing:
+ *
+ *  - `lines` (Array): Parsed lines.
+ *  - `addresses` (Object): Parsed labels containing the addresses.
+ *  - `_cAddress` (Number): The current address.
+ *  - `verbose` (String): The verbose parsing output.
+ *
+ */
 ArcAssembler.parse = Parse;
+
+/**
+ * compileLine
+ * Compiles a line.
+ *
+ * @name compileLine
+ * @function
+ * @param {Object} line The current line.
+ * @param {Object} parsed The object containing the parsed lines.
+ * @return {String} The machine code generated for the current line.
+ */
 ArcAssembler.compileLine = Compile;
+
+/**
+ * compile
+ * Compiles the parsed assembly code.
+ *
+ * @name compile
+ * @function
+ * @param {String|Array} lines The input lines.
+ * @return {Object} An object containing:
+ *
+ *  - `raw` (Array): An array containing raw output.
+ *  - `mCode` (Array): Generated machine code.
+ */
 ArcAssembler.compile = function (lines) {
     var result = {
         raw: [],

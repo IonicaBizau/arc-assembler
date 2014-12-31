@@ -1,11 +1,24 @@
+// Dependencies
 var Path = require("path")
   , Operators = require("./operators")
   , Util = require("arc-util")
   , Registers = {}
   ;
 
+// Get the stdout
 var Stdout = process.stdout ? process.stdout : window.Process.stdout;
 
+// Constructor
+var ArcInterpreter = module.exports = {};
+
+/*!
+ * initRegisters
+ * Inits the register contents.
+ *
+ * @name initRegisters
+ * @function
+ * @return {undefined}
+ */
 function initRegisters() {
     Registers = {
         "00000": Util.pad(0, 32)
@@ -70,7 +83,6 @@ function initRegisters() {
     }
 }
 
-var ArcInterpreter = module.exports = {};
 var RegisterMap = ArcInterpreter.registerMap = {
     "00000": "r0"
   , "00001": "r1"
@@ -173,6 +185,17 @@ var PSR = {
     }
 };
 
+/*!
+ * s
+ * Stringifies a buffer segment.
+ *
+ * @name s
+ * @function
+ * @param {Buffer} inp Segment of the buffer that should be stringified.
+ * @param {Number} s Start index.
+ * @param {Number} e End index.
+ * @return {String} The stringified segment of buffer.
+ */
 function s(inp, s, e) {
     var c = "";
     for (var i = s; i <= e; ++i) {
@@ -182,27 +205,84 @@ function s(inp, s, e) {
     return c;
 }
 
+/*!
+ * getLoc
+ * Computes the memory location located at simm13.
+ *
+ * @name getLoc
+ * @function
+ * @param {Buffer} buff The full buffer.
+ * @param {Buffer} cIns The buffer segment.
+ * @return {Number} Memory location of simm13 value.
+ */
 function getLoc(buff, cIns) {
     return Util.uncomp(s(cIns, 19, 31)) / 4;
 }
 
+/*!
+ * getSimm13
+ * Returns the raw value of simm13.
+ *
+ * @name getSimm13
+ * @function
+ * @param {Buffer} buff The full buffer.
+ * @param {Buffer} cIns The buffer segment.
+ * @return {String} Simm13 raw value.
+ */
 function getSimm13(buff, cIns) {
     return s(buff.slice((getLoc(buff, cIns)) * 32), 0, 31);
 }
 
 
+/*!
+ * rd
+ * Gets the destination register.
+ *
+ * @name rd
+ * @function
+ * @param {Buffer} cIns The buffer segment.
+ * @return {String} The destination register.
+ */
 function rd(cIns) {
     return s(cIns, 2, 6);
 }
 
+/*!
+ * rs1
+ * Gets the source 1 register.
+ *
+ * @name rs1
+ * @function
+ * @param {Buffer} cIns The buffer segment.
+ * @return {String} The source 1 register.
+ */
 function rs1(cIns) {
     return s(cIns, 13, 17);
 }
 
+/*!
+ * rs2
+ * Gets the source 2 register.
+ *
+ * @name rs2
+ * @function
+ * @param {Buffer} cIns The buffer segment.
+ * @return {String} The source 2 register.
+ */
 function rs2(cIns) {
     return s(cIns, 27, 31);
 }
 
+/*!
+ * rv
+ * Gets the register value.
+ *
+ * @name rv
+ * @function
+ * @param {String} r The register id.
+ * @param {String} b The result base.
+ * @return {String} The register value.
+ */
 function rv(r, b) {
     r = Registers[r];
     if (!r) {
@@ -214,6 +294,15 @@ function rv(r, b) {
     return r;
 }
 
+/*!
+ * interpret
+ *
+ * @name interpret
+ * @function
+ * @param {Buffer} cIns The buffer segment.
+ * @param {Buffer} buff The full buffer.
+ * @return {String} Verbose data.
+ */
 var ended = false;
 function interpret(cIns, buff) {
     var result = "";
@@ -388,6 +477,15 @@ function interpret(cIns, buff) {
     return result;
 }
 
+/**
+ * interpret
+ * Interprets machine code.
+ *
+ * @name interpret
+ * @function
+ * @param {Buffer} inp The input buffer (machine code).
+ * @return {String} Verbose output.
+ */
 var _r = ArcInterpreter.r = {};
 ArcInterpreter.interpret = function (inp) {
     var output = "";
@@ -419,6 +517,7 @@ ArcInterpreter.interpret = function (inp) {
     return output.trim();
 };
 
+// Browser support
 if (typeof window === "object") {
     window.ArcInterpreter = ArcInterpreter;
 }

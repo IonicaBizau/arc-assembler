@@ -1,5 +1,16 @@
+// Dependencies
 var Util = require("arc-util");
 
+/**
+ * handleNumber
+ * Converts a hex or decimal value to binary integer.
+ *
+ * @name handleNumber
+ * @function
+ * @param {String} r The raw value.
+ * @param {String} length The number of bits.
+ * @return {String} The binary representation of the input number.
+ */
 function handleNumber(r, length) {
     var value = ""
     // hex
@@ -20,6 +31,16 @@ function handleNumber(r, length) {
     return Util.bin(0, length);
 }
 
+/**
+ * compile
+ * Compiles a line.
+ *
+ * @name compile
+ * @function
+ * @param {Object} line The current line.
+ * @param {Object} parsed The object containing the parsed lines.
+ * @return {String} The machine code generated for the current line.
+ */
 function compile(line, parsed) {
 
     function bR(r, length) {

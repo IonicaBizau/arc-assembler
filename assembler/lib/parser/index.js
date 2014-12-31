@@ -76,11 +76,25 @@ var mnemonics = {
 
 const ALL_MNEMONICS = "\\b(?:" + Object.keys(mnemonics).join("|") + ")\\b";
 
+/**
+ * parse
+ * Parses provided lines of assembly code.
+ *
+ * @name parse
+ * @function
+ * @param {Array} lines The input lines.
+ * @return {Object} An object containing:
+ *
+ *  - `lines` (Array): Parsed lines.
+ *  - `addresses` (Object): Parsed labels containing the addresses.
+ *  - `_cAddress` (Number): The current address.
+ *  - `verbose` (String): The verbose parsing output.
+ *
+ */
 function parse(lines) {
 
     var result = {
         lines: []
-      , labels: []
       , addresses: {}
       , _cAddress: 0
       , verbose: ""
