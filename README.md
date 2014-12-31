@@ -270,6 +270,30 @@ printc %r1
 
 Prints in console the character from `%r1`.
 
+### Supported pseudo-operations
+
+#### `.begin`
+
+```asm
+.begin
+```
+
+Start assembling.
+
+#### `.end`
+```asm
+.end
+```
+
+Stop assembling.
+
+#### `.org`
+```asm
+.org 2048
+```
+
+Change location counter to `2048`.
+
 ## How to contribute
 
 1. File an issue in the repository, using the bug tracker, describing the
