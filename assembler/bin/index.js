@@ -1,27 +1,38 @@
+// Dependencies
 var Fs = require("fs")
-  , ArcAssembler = require("./lib")
+  , ArcAssembler = require("../lib")
+  , Argv = require("yargs")
+     .alias("s", "source")
+     .alias("o", "output")
+     .argv
+  , Path = require("path")
   ;
 
-const OUTPUT_FILE = __dirname + "/out"
-    , INPUT_FILE = __dirname + "/Test.asm"
+// Constants
+const INPUT_FILE = Path.resolve(process.cwd() + Argv.source)
+    , OUTPUT_FILE = Path.resolve(process.cwd() + Argv.output)
     ;
 
+// Create the write stream
 var outputStream = Fs.createWriteStream(OUTPUT_FILE);
 
-Fs.readFile(INPUT_FILE, "utf-8", function (err, lines) {
-    var result = ArcAssembler.compile(lines);
+// Read the input file content
+Fs.readFile(INPUT_FILE, "utf-8", function (err, content) {
+    if (err) throw err;
 
+    // Compile the input
+    var result = ArcAssembler.compile(content);
+
+    // Show some output
     result.raw.forEach(function (c) {
         console.log(c.code.match(/.{1,4}/g).join(" ") + " << Line " + c.line);
     });
 
-    console.log("---- Full machine code ----");
-    for (var i = 0; i < result.mCode.length; i += 32) {
-        console.log(result.mCode.slice(i, i + 32).join("").match(/.{1,4}/g).join(" "));
-    }
-
+    // Write things in the output stream
     outputStream.write("#!/usr/bin/env arc-int");
     outputStream.write(new Buffer(result.mCode));
     outputStream.end();
+
+    // Make the file executable
     Fs.chmodSync(OUTPUT_FILE, 0755);
 });
