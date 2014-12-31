@@ -1,6 +1,6 @@
 ARC Assembler & Interpreter
 ===========================
-An ARC assembler and interpreter.
+An ARC assembler and interpreter written in Node.JS.
 
 ## Installation
 
