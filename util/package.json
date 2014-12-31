@@ -1,0 +1,23 @@
+{
+  "name": "arc-util",
+  "version": "1.0.0",
+  "description": "Utility package for ARC assembler and interpreter.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:IonicaBizau/arc-assembler.git"
+  },
+  "keywords": [
+    "arc",
+    "util"
+  ],
+  "author": "Ionică Bizău <bizauionica@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IonicaBizau/arc-assembler/issues"
+  },
+  "homepage": "https://github.com/IonicaBizau/arc-assembler"
+}

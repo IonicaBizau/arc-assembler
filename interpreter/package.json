@@ -1,0 +1,27 @@
+{
+  "name": "arc-int",
+  "version": "1.0.1",
+  "description": "An ARC interpreter written in Node.JS.",
+  "main": "lib/index.js",
+  "bin": "./bin/arc-int",
+  "scripts": {
+    "test": "node test; ./bin/arc-int ../assembler/out"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:IonicaBizau/arc-assembler.git"
+  },
+  "keywords": [
+    "arc",
+    "interpreter"
+  ],
+  "dependencies": {
+    "arc-util": "*"
+  },
+  "author": "Ionică Bizău <bizauionica@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IonicaBizau/arc-assembler/issues"
+  },
+  "homepage": "https://github.com/IonicaBizau/arc-assembler"
+}

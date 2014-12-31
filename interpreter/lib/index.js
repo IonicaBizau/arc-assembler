@@ -1,6 +1,6 @@
 var Path = require("path")
   , Operators = require("./operators")
-  , Util = require("../../util")
+  , Util = require("arc-util")
   , Registers = {}
   ;
 
@@ -367,6 +367,15 @@ function interpret(cIns, buff) {
                     buff[loc + i] = parseInt(rdc[i]);
                 }
             }
+
+            if (Operators[op] === "printn") {
+                process.stdout.write(Util.uncomp(Registers[rd(cIns)]));
+            }
+
+            if (Operators[op] === "printc") {
+                process.stdout.write(String.fromCharCode(Util.uncomp(Registers[rd(cIns)])));
+            }
+
             break;
         default:
             throw new Error("Invalid instruction format.");
@@ -402,7 +411,7 @@ ArcInterpreter.interpret = function (inp) {
     }
 
     for (var i = 0; i < inp.length; i += 32) {
-        console.log(s(inp.slice(i, i + 32), 0, 31).match(/.{1,4}/g).join(" "));
+        output += s(inp.slice(i, i + 32), 0, 31).match(/.{1,4}/g).join(" ") + "\n";
     }
 
     return output.trim();
