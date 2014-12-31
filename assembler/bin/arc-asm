@@ -17,7 +17,6 @@ const INPUT_FILE = Path.resolve(process.cwd() + "/" + Argv.source)
          + "\n"
          + "\nOptions:"
          + "\n  -h, --help                          Displays this help."
-         + "\n  -v, --version                       Displays version information."
          + "\n  -s, --source <path/to/source/file>  Sets the source file path."
          + "\n  -o, --output <path/to/output/file>  Sets the output file path"
          + "\n"
