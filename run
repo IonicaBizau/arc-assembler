@@ -1,6 +1,0 @@
-#!/bin/bash
-echo "---------- Compiling ...    -------------"
-node assembler/index.js
-echo "---------- Interpreting ... -------------"
-node interpreter/index.js
-echo "---------- Done.            -------------"
