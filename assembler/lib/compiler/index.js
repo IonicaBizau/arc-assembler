@@ -1,4 +1,4 @@
-var Util = require("../../../util");
+var Util = require("arc-util");
 
 function handleNumber(r, length) {
     var value = ""

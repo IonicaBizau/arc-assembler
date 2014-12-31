@@ -1,6 +1,6 @@
 var Path = require("path")
   , Operators = require("./operators")
-  , Util = require("../../util")
+  , Util = require("arc-util")
   , Registers = {}
   ;
 

@@ -1,6 +1,6 @@
 var Parse = require("./parser")
   , Compile = require("./compiler")
-  , Util = require("../../util")
+  , Util = require("arc-util")
   ;
 
 var ArcAssembler = module.exports = {};

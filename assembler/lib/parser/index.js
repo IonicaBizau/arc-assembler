@@ -1,4 +1,4 @@
-var Util = require("../../../util");
+var Util = require("arc-util");
 var mnemonics = {
     "ld": {
         type: "memory"
