@@ -1,6 +1,6 @@
 {
   "name": "arc-asm",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "An ARC assembler written in Node.JS.",
   "main": "lib/index.js",
   "bin": "./bin/arc-asm",
@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "yargs": "1.3.3",
-    "arc-util": "2.1.0"
+    "arc-util": "3.0.0"
   },
   "author": "Ionică Bizău <bizauionica@gmail.com>",
   "license": "MIT",
