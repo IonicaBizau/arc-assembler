@@ -4,7 +4,7 @@
   "description": "An ARC interpreter written in Node.JS.",
   "main": "lib/index.js",
   "scripts": {
-    "test": "node test; ./bin/arc-int -s ../assembler/out"
+    "test": "node test; ./bin/arc-int ../assembler/out"
   },
   "repository": {
     "type": "git",
