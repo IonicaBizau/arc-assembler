@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Dependencies
 var Fs = require("fs")
   , ArcAssembler = require("../lib")
@@ -9,8 +11,8 @@ var Fs = require("fs")
   ;
 
 // Constants
-const INPUT_FILE = Path.resolve(process.cwd() + Argv.source)
-    , OUTPUT_FILE = Path.resolve(process.cwd() + Argv.output)
+const INPUT_FILE = Path.resolve(process.cwd() + "/" + Argv.source)
+    , OUTPUT_FILE = Path.resolve(process.cwd() + "/" + Argv.output)
     , HELP = "Usage: arc-asm [options]"
          + "\n"
          + "\nOptions:"
@@ -23,7 +25,7 @@ const INPUT_FILE = Path.resolve(process.cwd() + Argv.source)
     ;
 
 // Invalid data
-if (!Argv.source || !Arg.output) {
+if (!Argv.source || !Argv.output) {
     console.log(HELP);
     process.exit(1);
 }
