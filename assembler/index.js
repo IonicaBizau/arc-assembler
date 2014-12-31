@@ -20,7 +20,7 @@ Fs.readFile(INPUT_FILE, "utf-8", function (err, lines) {
         console.log(result.mCode.slice(i, i + 32).join("").match(/.{1,4}/g).join(" "));
     }
 
-    outputStream.write("#!env/arc-int\n");
+    outputStream.write("#!/usr/bin/env arc-int");
     outputStream.write(new Buffer(result.mCode));
     outputStream.end();
     Fs.chmodSync(OUTPUT_FILE, 0755);

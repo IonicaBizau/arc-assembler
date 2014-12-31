@@ -6,7 +6,7 @@ var Fs = require("fs")
 const INPUT_FILE = Path.resolve(__dirname + "/../assembler/out");
 Fs.readFile(INPUT_FILE, function (err, buff) {
     if (err) { throw err; }
-    buff = buff.slice(14);
+    buff = buff.slice(22);
     console.log(Interpreter.interpret(buff));
     console.log("--------------");
     console.log("Registers: ");
