@@ -4,6 +4,8 @@ var Path = require("path")
   , Registers = {}
   ;
 
+var Stdout = process.stdout ? process.stdout : window.Process.stdout;
+
 function initRegisters() {
     Registers = {
         "00000": Util.pad(0, 32)
@@ -369,11 +371,11 @@ function interpret(cIns, buff) {
             }
 
             if (Operators[op] === "printn") {
-                process.stdout.write(Util.uncomp(Registers[rd(cIns)]));
+                Stdout.write(Util.uncomp(Registers[rd(cIns)]));
             }
 
             if (Operators[op] === "printc") {
-                process.stdout.write(String.fromCharCode(Util.uncomp(Registers[rd(cIns)])));
+                Stdout.write(String.fromCharCode(Util.uncomp(Registers[rd(cIns)])));
             }
 
             break;
