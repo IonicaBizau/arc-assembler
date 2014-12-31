@@ -70,6 +70,7 @@ function parse(lines) {
       , labels: []
       , addresses: {}
       , _cAddress: 0
+      , verbose: ""
     };
 
     var lastLabel = null;
@@ -105,30 +106,34 @@ function parse(lines) {
             oArgs = c.replace("." + op, "").split(/[ ,]+/).filter(function (c) { return c; });
         }
 
-        if (op || label || instruction)
-            console.log("Line " + (parseInt(i) + 1) + ":");
+        if (op || label || instruction) {
+            result.verbose += "Line " + (parseInt(i) + 1) + ":\n";
+        }
 
-        if (op)
-            console.log("  > Pseudo ops: " + op);
+        if (op) {
+            result.verbose += "  > Pseudo ops: " + op;
+        }
 
 
-        if (oArgs.length)
-            console.log("  > Operator Args: " + JSON.stringify(oArgs));
+        if (oArgs.length) {
+            result.verbose += "  > Operator Args: " + JSON.stringify(oArgs);
+        }
 
         if (label) {
             lastLabel = label;
             lValue = c.replace(new RegExp("^" + label + "\:"), "").trim();
-            console.log("  > Label: " + label);
-            console.log("  > Content: " + lValue);
+            result.verbose += "  > Label: " + label;
+            result.verbose += "  > Content: " + lValue;
         }
 
         if (instruction) {
-            console.log("  > Instruction: " + instruction);
+            result.verbose += "  > Instruction: " + instruction;
             lValue = c.trim();
         }
 
-        if (iArgs.length)
-            console.log("  > Instruction Arguments: " + JSON.stringify(iArgs));
+        if (iArgs.length) {
+            result.verbose += "  > Instruction Arguments: " + JSON.stringify(iArgs);
+        }
 
         if (Util.isNumber(c.trim())) {
             lValue = c.trim();
