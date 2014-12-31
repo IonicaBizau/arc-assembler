@@ -11,7 +11,22 @@ var Fs = require("fs")
 // Constants
 const INPUT_FILE = Path.resolve(process.cwd() + Argv.source)
     , OUTPUT_FILE = Path.resolve(process.cwd() + Argv.output)
+    , HELP = "Usage: arc-asm [options]"
+         + "\n"
+         + "\nOptions:"
+         + "\n  -h, --help                          Displays this help."
+         + "\n  -v, --version                       Displays version information."
+         + "\n  -s, --source <path/to/source/file>  Sets the source file path."
+         + "\n  -o, --output <path/to/output/file>  Sets the output file path"
+         + "\n"
+         + "\nDocumentation can be found at https://github.com/IonicaBizau/arc-assembler"
     ;
+
+// Invalid data
+if (!Argv.source || !Arg.output) {
+    console.log(HELP);
+    process.exit(1);
+}
 
 // Create the write stream
 var outputStream = Fs.createWriteStream(OUTPUT_FILE);
