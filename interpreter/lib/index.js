@@ -460,7 +460,7 @@ function interpret(cIns, buff) {
             }
 
             if (Operators[op] === "printn") {
-                Stdout.write(Util.uncomp(Registers[rd(cIns)]));
+                Stdout.write(Util.uncomp(Registers[rd(cIns)]).toString());
             }
 
             if (Operators[op] === "printc") {
