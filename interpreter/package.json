@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "An ARC interpreter written in Node.JS.",
   "main": "lib/index.js",
+  "bin": "./bin/arc-int",
   "scripts": {
     "test": "node test; ./bin/arc-int ../assembler/out"
   },
