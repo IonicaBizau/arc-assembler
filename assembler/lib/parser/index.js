@@ -1,11 +1,15 @@
 var Util = require("arc-util");
 var mnemonics = {
+
+    // Memory
     "ld": {
         type: "memory"
     }
   , "st": {
         type: "memory"
     }
+
+    // SETHI/BRANCH
   , "sethi": {
         type: "sethi"
     }
@@ -28,13 +32,13 @@ var mnemonics = {
   , "ba": {
         type: "branch"
     }
-  , "ba": {
-        type: "branch"
-    }
+
+    // Call format
   , "call": {
         type: "control"
     }
 
+    // Arithmetic
   , "addcc": {
         type: "arithmetic"
     }
