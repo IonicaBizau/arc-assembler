@@ -16,7 +16,8 @@
     "assembler"
   ],
   "dependencies": {
-    "yargs": "1.3.3"
+    "yargs": "1.3.3",
+    "arc-util": "*"
   },
   "author": "Ionică Bizău <bizauionica@gmail.com>",
   "license": "MIT",
