@@ -2,6 +2,9 @@ ARC Assembler & Interpreter
 ===========================
 An ARC assembler and interpreter written in Node.JS.
 
+## Presentation
+[Click here](https://docs.google.com/presentation/d/1mot26ZuiUIKRXCICa-4uNp-OfksdtQ8RbiOp-56lpgw/edit?usp=sharing) to see the presentation of the project.
+
 ## Installation
 
 ```sh
