@@ -109,7 +109,7 @@ function parse(lines) {
         c = c.replace(/\!.*$/g, "");
 
         var op = ((c.match(/\.([a-z]+)/) || [])[1] || "").trim()
-          , label = ((c.match(/^([a-z,_]+):\ /) || [])[1] || "").trim()
+          , label = ((c.match(/^([a-z,_]+):\ /i) || [])[1] || "").trim()
           , instruction = null
           , iArgs = []
           , oArgs = []
