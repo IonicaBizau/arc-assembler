@@ -1,6 +1,6 @@
 {
   "name": "arc-util",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Utility package for ARC assembler and interpreter.",
   "main": "index.js",
   "scripts": {
@@ -14,8 +14,8 @@
     "arc",
     "util"
   ],
-  "author": "Ionică Bizău <bizauionica@gmail.com>",
-  "license": "MIT",
+  "author": "Ionică Bizău <bizauionica@gmail.com> (http://ionicabizau.net)",
+  "license": "KINDLY",
   "bugs": {
     "url": "https://github.com/IonicaBizau/arc-assembler/issues"
   },
