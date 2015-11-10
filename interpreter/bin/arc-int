@@ -17,8 +17,7 @@ const INPUT_FILE = Path.resolve(process.cwd() + "/" + process.argv[2])
          + "\nDocumentation can be found at https://github.com/IonicaBizau/arc-assembler"
     ;
 
-// Invalid data
-if (!process.argv[2]) {
+if (~process.argv.indexOf("-h") || ~process.argv.indexOf("-h") || !process.argv[2]) {
     console.log(HELP);
     process.exit(1);
 }

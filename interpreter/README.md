@@ -1,18 +1,28 @@
-ARC Interpreter
-===============
+# `$ arc-int` [![Support this project][donate-now]][paypal-donations]
+
 An ARC interpreter written in Node.JS.
 
 ## Installation
 
+You can install the package globally and use it as command line tool:
+
 ```sh
-$ npm install arc-int
+$ npm i -g arc-int
 ```
+
+Then, run `arc-int --help` and see what the CLI tool can do.
 
 ## Example
 
+Here is an example how to use this package as library. To install it locally, as library, you can do that using `npm`:
+
+```sh
+$ npm i arc-int
+```
+
 ```js
 // Dependencies
-var ArcInterpreter = require("../lib")
+var ArcInterpreter = require("arc-int")
 
 // Interpret
 console.log(ArcInterpreter.interpret([
@@ -26,25 +36,24 @@ console.log(ArcInterpreter.interpret([
 ```
 
 ## Documentation
-### `interpret(inp)`
-Interprets machine code.
 
-#### Params
-- **Buffer** `inp`: The input buffer (machine code).
-
-#### Return
-- **String** Verbose output.
+For full API reference, see the [DOCUMENTATION.md][docs] file.
 
 ## How to contribute
+Have an idea? Found a bug? See [how to contribute][contributing].
 
-1. File an issue in the repository, using the bug tracker, describing the
-   contribution you'd like to make. This will help us to get you started on the
-   right foot.
-2. Fork the project in your account and create a new branch:
-   `your-great-feature`.
-3. Commit your changes in that branch.
-4. Open a pull request, and reference the initial issue in the pull request
-   message.
+## Where is this library used?
+If you are using this library in one of your projects, add it in this list. :sparkles:
 
 ## License
-See the [LICENSE](./LICENSE) file.
+
+[KINDLY][license] © [Ionică Bizău][website]
+
+[license]: http://ionicabizau.github.io/kindly-license/?author=Ionic%C4%83%20Biz%C4%83u%20%3Cbizauionica@gmail.com%3E&year=2014
+
+[website]: http://ionicabizau.net
+[paypal-donations]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RVXDDLKKLQRJW
+[donate-now]: http://i.imgur.com/6cMbHOC.png
+
+[contributing]: /CONTRIBUTING.md
+[docs]: /DOCUMENTATION.md
