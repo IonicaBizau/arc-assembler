@@ -1,14 +1,16 @@
-ARC Assembler & Interpreter
-===========================
-An ARC assembler and interpreter written in Node.JS.
+# arc-assembler [![Support this project][donate-now]][paypal-donations]
+
+An ARC assembler written in Node.JS.
 
 ## Presentation
+
 [Click here](https://docs.google.com/presentation/d/1mot26ZuiUIKRXCICa-4uNp-OfksdtQ8RbiOp-56lpgw/edit?usp=sharing) to see the presentation of the project.
 
 ## Installation
-
 ```sh
+# Install the assembler
 $ npm install -g arc-asm
+# Install the interpreter
 $ npm install -g arc-int
 ```
 
@@ -16,34 +18,12 @@ Also, you can checkout [the online version](http://ionicabizau.github.io/arc-ass
 
 ## Usage
 
-### `arc-asm`
-```sh
-$ arc-asm  --help
-Usage: arc-asm [options]
-
-Options:
-  -h, --help                          Displays this help.
-  -s, --source <path/to/source/file>  Sets the source file path.
-  -o, --output <path/to/output/file>  Sets the output file path
-
-Documentation can be found at https://github.com/IonicaBizau/arc-assembler
-```
-
-### `arc-int`
-
-```sh
-$ arc-int
-Usage: arc-int <path/to/binary/file>
-
-Documentation can be found at https://github.com/IonicaBizau/arc-assembler
-```
-
-You can pass `-v` and `-r` flags:
-
- - `-v`: verbose output
- - `-r`: shows the final state of registers
+Checkout the [assembler](/assembler) and [interpreter](/interpreter) docs
 
 ## Example
+
+Here we go through the process of assembling a file and then interpreting it.
+
 Write the following content in a file (e.g. `hello-world.asm`).
 
 ```asm
@@ -92,7 +72,7 @@ length:     12
             .end
 ```
 
-Compile the assembly file using:
+Assemble this the assembly file using the assembler command line tool. This will generate a executable.
 
 ```sh
 $ arc-asm -s hello-world.asm -o hello
@@ -122,21 +102,28 @@ $ arc-asm -s hello-world.asm -o hello
 0000 0000 0000 0000 0000 0000 0000 1010 << Line 42
 ```
 
-Then run it as executable:
+Then run it as executable (you have to make sure you installed the interpreter globally):
 
 ```sh
 $ ./hello
 Hello World
 ```
 
-Or interpret it with `arc-int` tool:
+Or interpret it with the `arc-int` tool:
 
 ```sh
 $ arc-int hello
 Hello World
 ```
 
+## Installation
+
+```sh
+$ npm i arc-assembler
+```
+
 ## Documentation
+
 ### Supported Instructions
 
 #### `Branch`
@@ -295,18 +282,23 @@ Stop assembling.
 .org 2048
 ```
 
-Change location counter to `2048`.
+Changes location counter to `2048`.
 
 ## How to contribute
+Have an idea? Found a bug? See [how to contribute][contributing].
 
-1. File an issue in the repository, using the bug tracker, describing the
-   contribution you'd like to make. This will help us to get you started on the
-   right foot.
-2. Fork the project in your account and create a new branch:
-   `your-great-feature`.
-3. Commit your changes in that branch.
-4. Open a pull request, and reference the initial issue in the pull request
-   message.
+## Where is this library used?
+If you are using this library in one of your projects, add it in this list. :sparkles:
 
 ## License
-See the [LICENSE](./LICENSE) file.
+
+[KINDLY][license] © [Ionică Bizău][website]
+
+[license]: http://ionicabizau.github.io/kindly-license/?author=Ionic%C4%83%20Biz%C4%83u%20%3Cbizauionica@gmail.com%3E&year=2014
+
+[website]: http://ionicabizau.net
+[paypal-donations]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RVXDDLKKLQRJW
+[donate-now]: http://i.imgur.com/6cMbHOC.png
+
+[contributing]: /CONTRIBUTING.md
+[docs]: /DOCUMENTATION.md
