@@ -335,6 +335,6 @@
       "",
       "Changes location counter to `2048`."
     ],
-    "license_year": "2014\n"
+    "thanks": "Back in 2014, I coded this during the *Computer Architecture* course by [**@HoreaOros**](https://github.com/HoreaOros)–one of my greatest computer-science teachers. :sparkle: :cake:"
   }
 }
