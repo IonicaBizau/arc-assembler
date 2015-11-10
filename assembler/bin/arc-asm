@@ -3,37 +3,43 @@
 // Dependencies
 var Fs = require("fs")
   , ArcAssembler = require("../lib")
-  , Argv = require("yargs")
-     .alias("s", "source")
-     .alias("o", "output")
-     .argv
+  , Clp = require("clp")
+  , Package = require("../package")
   , Path = require("path")
+  , ReadUtf8 = require("read-utf8")
   ;
 
-// Constants
-const INPUT_FILE = Path.resolve(process.cwd() + "/" + Argv.source)
-    , OUTPUT_FILE = Path.resolve(process.cwd() + "/" + Argv.output)
-    , HELP = "Usage: arc-asm [options]"
-         + "\n"
-         + "\nOptions:"
-         + "\n  -h, --help                          Displays this help."
-         + "\n  -s, --source <path/to/source/file>  Sets the source file path."
-         + "\n  -o, --output <path/to/output/file>  Sets the output file path"
-         + "\n"
-         + "\nDocumentation can be found at https://github.com/IonicaBizau/arc-assembler"
-    ;
+var sourceOpt = new Clp.Option(["s", "source"], "Sets the source file path.", "path")
+  , outputOpt = new Clp.Option(["o", "output"], "Sets the output file path.", "path", "a.out")
+  , parser = new Clp({
+        name: "ARC Assembler"
+      , version: Package.version
+      , exe: Package.name
+      , examples: [
+            "arc-asm -s my-input.asm # This will generate a.out",
+            "arc-asm -s my-input.asm -o program # This will generate the `program` file.",
+        ]
+      , docs_url: Package.homepage
+      , process: true
+    }, [
+        sourceOpt
+      , outputOpt
+    ])
+  ;
 
-// Invalid data
-if (!Argv.source || !Argv.output) {
-    console.log(HELP);
-    process.exit(1);
+
+if (!sourceOpt.is_provided) {
+    return console.log(parser.displayHelp());
 }
 
-// Create the write stream
-var outputStream = Fs.createWriteStream(OUTPUT_FILE);
+// Input and output file paths
+var INPUT_FILE = Path.resolve(process.cwd() + "/" + sourceOpt.value)
+  , OUTPUT_FILE = Path.resolve(process.cwd() + "/" + outputOpt.value)
+  , outputStream = Fs.createWriteStream(OUTPUT_FILE)
+  ;
 
 // Read the input file content
-Fs.readFile(INPUT_FILE, "utf-8", function (err, content) {
+ReadUtf8(INPUT_FILE, function (err, content) {
     if (err) throw err;
 
     // Compile the input

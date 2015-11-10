@@ -3,26 +3,34 @@
   "version": "4.1.0",
   "description": "An ARC assembler written in Node.JS.",
   "main": "lib/index.js",
-  "bin": "./bin/arc-asm",
+  "bin": {
+    "arc-asm": "./bin/arc-asm"
+  },
   "scripts": {
     "test": "node test; ./bin/arc-asm -s test/Test.asm -o ./out"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:IonicaBizau/arc-assembler.git"
+    "url": "git+ssh://git@github.com/IonicaBizau/arc-assembler.git"
   },
   "keywords": [
     "arc",
     "assembler"
   ],
   "dependencies": {
-    "yargs": "1.3.3",
-    "arc-util": "3.0.0"
+    "arc-util": "3.0.0",
+    "clp": "^3.0.0",
+    "read-utf8": "^1.0.0",
+    "yargs": "1.3.3"
   },
   "author": "Ionică Bizău <bizauionica@gmail.com> (http://ionicabizau.net)",
   "license": "KINDLY",
   "bugs": {
     "url": "https://github.com/IonicaBizau/arc-assembler/issues"
   },
-  "homepage": "https://github.com/IonicaBizau/arc-assembler"
+  "homepage": "https://github.com/IonicaBizau/arc-assembler",
+  "directories": {
+    "example": "example"
+  },
+  "devDependencies": {}
 }

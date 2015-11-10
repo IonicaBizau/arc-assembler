@@ -12,6 +12,23 @@ $ npm i -g arc-asm
 
 Then, run `arc-asm --help` and see what the CLI tool can do.
 
+```sh
+$ arc-asm --help
+Usage: arc-asm [options]
+
+Options:
+  -s, --source <path>  Sets the source file path.   
+  -o, --output <path>  Sets the output file path.   
+  -h, --help           Displays this help.          
+  -v, --version        Displays version information.
+
+Examples:
+  arc-asm -s my-input.asm # This will generate a.out
+  arc-asm -s my-input.asm -o program # This will generate the `program` file.
+
+Documentation can be found at https://github.com/IonicaBizau/arc-assembler
+```
+
 ## Example
 
 Here is an example how to use this package as library. To install it locally, as library, you can do that using `npm`:
