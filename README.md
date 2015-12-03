@@ -116,192 +116,20 @@ $ arc-int hello
 Hello World
 ```
 
-## Installation
-
-```sh
-$ npm i arc-assembler
-```
-
-## Documentation
-
-### Supported Instructions
-
-#### `Branch`
-
-##### `be`
-
-```asm
-be label
-```
-
-If the `z` bit from the `PSR` register is `1`, the subrutine located at `label` address is called.
-
-##### `bneg`
-
-```asm
-bneg label
-```
-
-If the `n` bit from the `PSR` register is `1`, the subrutine located at `label` address is called.
-
-##### `bcs`
-
-```asm
-bcs label
-```
-
-If the `c` bit from the `PSR` register is `1`, the subrutine located at `label` address of is called.
-
-##### `bvs`
-
-```asm
-bvs label
-```
-
-If the `v` bit from the `PSR` register is `1`, the subrutine located at `label` address is called.
-
-##### `ba`
-
-```asm
-ba label
-```
-
-Branch always the subrutine located at `label` address.
-
-#### `CALL`
-
-##### `call`
-
-```asm
-call label
-```
-
-Calls a subrutine located at `label` address and stores the current address in `r15`.
-
-##### `jpml`
-
-```asm
-jmpl %r15+4, %r0
-```
-
-Jumps at the address indicated by `r15` register value and stores the result in `r0`.
-
-#### Arithmetic
-
-##### `addcc`
-```asm
-addcc %r1, %r2, %r3
-```
-
-Sums the values of `r1` and `r2` in `r3`.
-
-##### `andcc`
-```asm
-andcc %r1, %r2, %r3
-```
-
-Bitwise AND between `r1` and `r2`, storing the result in `r3`.
-
-##### `andncc`
-```asm
-andncc %r1, %r2, %r3
-```
-
-Bitwise NOT AND between `r1` and `r2`, storing the result in `r3`.
-
-##### `orcc`
-```asm
-orcc %r1, %r2, %r3
-```
-
-Bitwise OR between `r1` and `r2`, storing the result in `r3`.
-
-##### `orncc`
-```asm
-orncc %r1, %r2, %r3
-```
-
-Bitwise NOR between `r1` and `r2`, storing the result in `r3`.
-
-##### `xorcc`
-```asm
-xorcc %r1, %r2, %r3
-```
-
-Bitwise XOR between `r1` and `r2`, storing the result in `r3`.
-
-#### Memory
-##### `ld`
-```asm
-ld [x], %r1
-```
-
-Load value from `x` address into `r1`.
-
-##### `st`
-```asm
-ld %r1, [x]
-```
-
-Stores `r1` value into `x` address.
-
-#### Output
-##### `printn`
-```asm
-printn %r1
-```
-
-Prints in console the decimal number from `%r1`.
-
-##### `printc`
-```asm
-printc %r1
-```
-
-Prints in console the character from `%r1`.
-
-### Supported pseudo-operations
-
-#### `.begin`
-
-```asm
-.begin
-```
-
-Start assembling.
-
-#### `.end`
-```asm
-.end
-```
-
-Stop assembling.
-
-#### `.org`
-```asm
-.org 2048
-```
-
-Changes location counter to `2048`.
-
 ## How to contribute
 Have an idea? Found a bug? See [how to contribute][contributing].
 
 ## Thanks
 Back in 2014, I coded this during the *Computer Architecture* course by [**@HoreaOros**](https://github.com/HoreaOros)–one of my greatest computer-science teachers. :sparkle: :cake:
 
-## Where is this library used?
-If you are using this library in one of your projects, add it in this list. :sparkles:
-
 ## License
 
-[KINDLY][license] © [Ionică Bizău][website]
+[MIT][license] © [Ionică Bizău][website]
 
-[license]: http://ionicabizau.github.io/kindly-license/?author=Ionic%C4%83%20Biz%C4%83u%20%3Cbizauionica@gmail.com%3E&year=2014
-
-[website]: http://ionicabizau.net
 [paypal-donations]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RVXDDLKKLQRJW
 [donate-now]: http://i.imgur.com/6cMbHOC.png
 
+[license]: http://showalicense.com/?fullname=Ionic%C4%83%20Biz%C4%83u%20%3Cbizauionica%40gmail.com%3E%20(http%3A%2F%2Fionicabizau.net)&year=2014#license-mit
+[website]: http://ionicabizau.net
 [contributing]: /CONTRIBUTING.md
 [docs]: /DOCUMENTATION.md
