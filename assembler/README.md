@@ -1,6 +1,6 @@
-# `$ arc-asm` [![Support this project][donate-now]][paypal-donations]
+# `$ arc-asm` [![PayPal](https://img.shields.io/badge/%24-paypal-f39c12.svg)][paypal-donations] [![Version](https://img.shields.io/npm/v/arc-asm.svg)](https://www.npmjs.com/package/arc-asm) [![Downloads](https://img.shields.io/npm/dt/arc-asm.svg)](https://www.npmjs.com/package/arc-asm) [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/johnnyb?utm_source=github&utm_medium=button&utm_term=johnnyb&utm_campaign=github)
 
-An ARC assembler written in Node.JS.
+> An ARC assembler written in Node.JS.
 
 ## Installation
 
@@ -34,7 +34,7 @@ Documentation can be found at https://github.com/IonicaBizau/arc-assembler
 Here is an example how to use this package as library. To install it locally, as library, you can do that using `npm`:
 
 ```sh
-$ npm i arc-asm
+$ npm i --save arc-asm
 ```
 
 ```js
@@ -75,11 +75,10 @@ If you are using this library in one of your projects, add it in this list. :spa
 
 [KINDLY][license] © [Ionică Bizău][website]
 
-[license]: http://ionicabizau.github.io/kindly-license/?author=Ionic%C4%83%20Biz%C4%83u%20%3Cbizauionica@gmail.com%3E&year=2014
-
-[website]: http://ionicabizau.net
 [paypal-donations]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RVXDDLKKLQRJW
 [donate-now]: http://i.imgur.com/6cMbHOC.png
 
+[license]: http://showalicense.com/?fullname=Ionic%C4%83%20Biz%C4%83u%20%3Cbizauionica%40gmail.com%3E%20(http%3A%2F%2Fionicabizau.net)&year=2014#license-kindly
+[website]: http://ionicabizau.net
 [contributing]: /CONTRIBUTING.md
 [docs]: /DOCUMENTATION.md

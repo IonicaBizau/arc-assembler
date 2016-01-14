@@ -1,6 +1,6 @@
 {
   "name": "arc-asm",
-  "version": "4.1.0",
+  "version": "4.0.1",
   "description": "An ARC assembler written in Node.JS.",
   "main": "lib/index.js",
   "bin": {
