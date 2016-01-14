@@ -1,6 +1,6 @@
-# arc-assembler [![Support this project][donate-now]][paypal-donations]
+# arc-assembler [![PayPal](https://img.shields.io/badge/%24-paypal-f39c12.svg)][paypal-donations] [![Version](https://img.shields.io/npm/v/arc-assembler.svg)](https://www.npmjs.com/package/arc-assembler) [![Downloads](https://img.shields.io/npm/dt/arc-assembler.svg)](https://www.npmjs.com/package/arc-assembler) [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/johnnyb?utm_source=github&utm_medium=button&utm_term=johnnyb&utm_campaign=github)
 
-An ARC assembler written in Node.JS.
+> An ARC assembler written in Node.JS.
 
 ## Presentation
 
@@ -115,6 +115,168 @@ Or interpret it with the `arc-int` tool:
 $ arc-int hello
 Hello World
 ```
+
+## Documentation
+
+### Supported Instructions
+
+#### `Branch`
+
+##### `be`
+
+```asm
+be label
+```
+
+If the `z` bit from the `PSR` register is `1`, the subrutine located at `label` address is called.
+
+##### `bneg`
+
+```asm
+bneg label
+```
+
+If the `n` bit from the `PSR` register is `1`, the subrutine located at `label` address is called.
+
+##### `bcs`
+
+```asm
+bcs label
+```
+
+If the `c` bit from the `PSR` register is `1`, the subrutine located at `label` address of is called.
+
+##### `bvs`
+
+```asm
+bvs label
+```
+
+If the `v` bit from the `PSR` register is `1`, the subrutine located at `label` address is called.
+
+##### `ba`
+
+```asm
+ba label
+```
+
+Branch always the subrutine located at `label` address.
+
+#### `CALL`
+
+##### `call`
+
+```asm
+call label
+```
+
+Calls a subrutine located at `label` address and stores the current address in `r15`.
+
+##### `jpml`
+
+```asm
+jmpl %r15+4, %r0
+```
+
+Jumps at the address indicated by `r15` register value and stores the result in `r0`.
+
+#### Arithmetic
+
+##### `addcc`
+```asm
+addcc %r1, %r2, %r3
+```
+
+Sums the values of `r1` and `r2` in `r3`.
+
+##### `andcc`
+```asm
+andcc %r1, %r2, %r3
+```
+
+Bitwise AND between `r1` and `r2`, storing the result in `r3`.
+
+##### `andncc`
+```asm
+andncc %r1, %r2, %r3
+```
+
+Bitwise NOT AND between `r1` and `r2`, storing the result in `r3`.
+
+##### `orcc`
+```asm
+orcc %r1, %r2, %r3
+```
+
+Bitwise OR between `r1` and `r2`, storing the result in `r3`.
+
+##### `orncc`
+```asm
+orncc %r1, %r2, %r3
+```
+
+Bitwise NOR between `r1` and `r2`, storing the result in `r3`.
+
+##### `xorcc`
+```asm
+xorcc %r1, %r2, %r3
+```
+
+Bitwise XOR between `r1` and `r2`, storing the result in `r3`.
+
+#### Memory
+##### `ld`
+```asm
+ld [x], %r1
+```
+
+Load value from `x` address into `r1`.
+
+##### `st`
+```asm
+ld %r1, [x]
+```
+
+Stores `r1` value into `x` address.
+
+#### Output
+##### `printn`
+```asm
+printn %r1
+```
+
+Prints in console the decimal number from `%r1`.
+
+##### `printc`
+```asm
+printc %r1
+```
+
+Prints in console the character from `%r1`.
+
+### Supported pseudo-operations
+
+#### `.begin`
+
+```asm
+.begin
+```
+
+Start assembling.
+
+#### `.end`
+```asm
+.end
+```
+
+Stop assembling.
+
+#### `.org`
+```asm
+.org 2048
+```
+
+Changes location counter to `2048`.
 
 ## How to contribute
 Have an idea? Found a bug? See [how to contribute][contributing].
