@@ -1,3 +1,4 @@
+
 # arc-assembler [![PayPal](https://img.shields.io/badge/%24-paypal-f39c12.svg)][paypal-donations] [![Version](https://img.shields.io/npm/v/arc-assembler.svg)](https://www.npmjs.com/package/arc-assembler) [![Downloads](https://img.shields.io/npm/dt/arc-assembler.svg)](https://www.npmjs.com/package/arc-assembler) [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/johnnyb?utm_source=github&utm_medium=button&utm_term=johnnyb&utm_campaign=github)
 
 > An ARC assembler written in Node.JS.
@@ -116,7 +117,7 @@ $ arc-int hello
 Hello World
 ```
 
-## Documentation
+## :memo: Documentation
 
 ### Supported Instructions
 
@@ -278,13 +279,14 @@ Stop assembling.
 
 Changes location counter to `2048`.
 
-## How to contribute
+## :yum: How to contribute
 Have an idea? Found a bug? See [how to contribute][contributing].
 
-## Thanks
+## :cake: Thanks
 Back in 2014, I coded this during the *Computer Architecture* course by [**@HoreaOros**](https://github.com/HoreaOros)–one of my greatest computer-science teachers. :sparkle: :cake:
 
-## License
+
+## :scroll: License
 
 [MIT][license] © [Ionică Bizău][website]
 

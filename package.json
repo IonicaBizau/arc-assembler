@@ -1,6 +1,6 @@
 {
   "name": "arc-assembler",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "An ARC assembler written in Node.JS.",
   "directories": {
     "example": "examples"
@@ -336,5 +336,17 @@
       "Changes location counter to `2048`."
     ],
     "thanks": "Back in 2014, I coded this during the *Computer Architecture* course by [**@HoreaOros**](https://github.com/HoreaOros)–one of my greatest computer-science teachers. :sparkle: :cake:"
-  }
+  },
+  "files": [
+    "bin/",
+    "app/",
+    "lib/",
+    "dist/",
+    "src/",
+    "resources/",
+    "menu/",
+    "cli.js",
+    "index.js"
+  ],
+  "main": "lib/index.js"
 }
