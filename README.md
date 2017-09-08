@@ -9,11 +9,9 @@
 
 ## Presentation
 
-
 [Click here](https://docs.google.com/presentation/d/1mot26ZuiUIKRXCICa-4uNp-OfksdtQ8RbiOp-56lpgw/edit?usp=sharing) to see the presentation of the project.
 
 ## Installation
-
 ```sh
 # Install the assembler
 $ npm install -g arc-asm
@@ -21,16 +19,13 @@ $ npm install -g arc-asm
 $ npm install -g arc-int
 ```
 
-
 Also, you can checkout [the online version](http://ionicabizau.github.io/arc-assembler/).
 
 ## Usage
 
-
 Checkout the [assembler](/assembler) and [interpreter](/interpreter) docs
 
 ## Example
-
 
 Here we go through the process of assembling a file and then interpreting it.
 
@@ -82,7 +77,6 @@ length:     12
             .end
 ```
 
-
 Assemble this the assembly file using the assembler command line tool. This will generate a executable.
 
 ```sh
@@ -113,7 +107,6 @@ $ arc-asm -s hello-world.asm -o hello
 0000 0000 0000 0000 0000 0000 0000 1010 << Line 42
 ```
 
-
 Then run it as executable (you have to make sure you installed the interpreter globally):
 
 ```sh
@@ -121,14 +114,12 @@ $ ./hello
 Hello World
 ```
 
-
 Or interpret it with the `arc-int` tool:
 
 ```sh
 $ arc-int hello
 Hello World
 ```
-
 
 ## :memo: Documentation
 
