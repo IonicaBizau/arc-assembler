@@ -1,22 +1,18 @@
-define("ace/mode/gcode_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module) {
+"use strict";
+
+define("ace/mode/gcode_highlight_rules", ["require", "exports", "module", "ace/lib/oop", "ace/mode/text_highlight_rules"], function (require, exports, module) {
     "use strict";
 
     var oop = require("../lib/oop");
     var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
-    var GcodeHighlightRules = function() {
+    var GcodeHighlightRules = function GcodeHighlightRules() {
 
-        var keywords = (
-            "IF|DO|WHILE|ENDWHILE|CALL|ENDIF|SUB|ENDSUB|GOTO|REPEAT|ENDREPEAT|CALL"
-            );
+        var keywords = "IF|DO|WHILE|ENDWHILE|CALL|ENDIF|SUB|ENDSUB|GOTO|REPEAT|ENDREPEAT|CALL";
 
-        var builtinConstants = (
-            "PI"
-            );
+        var builtinConstants = "PI";
 
-        var builtinFunctions = (
-            "ATAN|ABS|ACOS|ASIN|SIN|COS|EXP|FIX|FUP|ROUND|LN|TAN"
-            );
+        var builtinFunctions = "ATAN|ABS|ACOS|ASIN|SIN|COS|EXP|FIX|FUP|ROUND|LN|TAN";
         var keywordMapper = this.createKeywordMapper({
             "support.function": builtinFunctions,
             "keyword": keywords,
@@ -24,37 +20,37 @@ define("ace/mode/gcode_highlight_rules",["require","exports","module","ace/lib/o
         }, "identifier", true);
 
         this.$rules = {
-            "start" : [ {
-                token : "comment",
-                regex : "\\(.*\\)"
+            "start": [{
+                token: "comment",
+                regex: "\\(.*\\)"
             }, {
-                token : "comment",           // block number
-                regex : "([N])([0-9]+)"
+                token: "comment", // block number
+                regex: "([N])([0-9]+)"
             }, {
-                token : "string",           // " string
-                regex : "([G])([0-9]+\\.?[0-9]?)"
+                token: "string", // " string
+                regex: "([G])([0-9]+\\.?[0-9]?)"
             }, {
-                token : "string",           // ' string
-                regex : "([M])([0-9]+\\.?[0-9]?)"
+                token: "string", // ' string
+                regex: "([M])([0-9]+\\.?[0-9]?)"
             }, {
-                token : "constant.numeric", // float
-                regex : "([-+]?([0-9]*\\.?[0-9]+\\.?))|(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)"
+                token: "constant.numeric", // float
+                regex: "([-+]?([0-9]*\\.?[0-9]+\\.?))|(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)"
             }, {
-                token : keywordMapper,
-                regex : "[A-Z]"
+                token: keywordMapper,
+                regex: "[A-Z]"
             }, {
-                token : "keyword.operator",
-                regex : "EQ|LT|GT|NE|GE|LE|OR|XOR"
+                token: "keyword.operator",
+                regex: "EQ|LT|GT|NE|GE|LE|OR|XOR"
             }, {
-                token : "paren.lparen",
-                regex : "[\\[]"
+                token: "paren.lparen",
+                regex: "[\\[]"
             }, {
-                token : "paren.rparen",
-                regex : "[\\]]"
+                token: "paren.rparen",
+                regex: "[\\]]"
             }, {
-                token : "text",
-                regex : "\\s+"
-            } ]
+                token: "text",
+                regex: "\\s+"
+            }]
         };
     };
 
@@ -63,7 +59,7 @@ define("ace/mode/gcode_highlight_rules",["require","exports","module","ace/lib/o
     exports.GcodeHighlightRules = GcodeHighlightRules;
 });
 
-define("ace/mode/gcode",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/gcode_highlight_rules","ace/range"], function(require, exports, module) {
+define("ace/mode/gcode", ["require", "exports", "module", "ace/lib/oop", "ace/mode/text", "ace/mode/gcode_highlight_rules", "ace/range"], function (require, exports, module) {
     "use strict";
 
     var oop = require("../lib/oop");
@@ -71,15 +67,14 @@ define("ace/mode/gcode",["require","exports","module","ace/lib/oop","ace/mode/te
     var GcodeHighlightRules = require("./gcode_highlight_rules").GcodeHighlightRules;
     var Range = require("../range").Range;
 
-    var Mode = function() {
+    var Mode = function Mode() {
         this.HighlightRules = GcodeHighlightRules;
     };
     oop.inherits(Mode, TextMode);
 
-    (function() {
+    (function () {
         this.$id = "ace/mode/gcode";
     }).call(Mode.prototype);
 
     exports.Mode = Mode;
-
 });

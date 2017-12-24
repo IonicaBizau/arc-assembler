@@ -1,9 +1,10 @@
-xdescribe("UI Tab", function() {
+'use strict';
+
+xdescribe("UI Tab", function () {
 
   moduleTests({
-    module    : 'tab',
-    element   : '.ui.menu .item',
-    singleton : true
+    module: 'tab',
+    element: '.ui.menu .item',
+    singleton: true
   });
-
 });

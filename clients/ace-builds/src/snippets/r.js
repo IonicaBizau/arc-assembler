@@ -1,7 +1,9 @@
-define("ace/snippets/r",["require","exports","module"], function(require, exports, module) {
 "use strict";
 
-exports.snippetText = "snippet #!\n\
+define("ace/snippets/r", ["require", "exports", "module"], function (require, exports, module) {
+	"use strict";
+
+	exports.snippetText = "snippet #!\n\
 	#!/usr/bin/env Rscript\n\
 \n\
 # includes\n\
@@ -123,6 +125,5 @@ snippet fte\n\
 snippet kvt \n\
 	kv.test(${1:x}, ${2:y})\n\
 ";
-exports.scope = "r";
-
+	exports.scope = "r";
 });

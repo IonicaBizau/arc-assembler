@@ -1,7 +1,9 @@
-define("ace/snippets/jsoniq",["require","exports","module"], function(require, exports, module) {
 "use strict";
 
-exports.snippetText = "snippet for\n\
+define("ace/snippets/jsoniq", ["require", "exports", "module"], function (require, exports, module) {
+	"use strict";
+
+	exports.snippetText = "snippet for\n\
 	for $${1:item} in ${2:expr}\n\
 snippet return\n\
 	return ${1:expr}\n\
@@ -63,6 +65,5 @@ snippet fn\n\
 snippet module\n\
 	module namespace ${1:ns} = \"${2:http://www.example.com}\";\n\
 ";
-exports.scope = "jsoniq";
-
+	exports.scope = "jsoniq";
 });

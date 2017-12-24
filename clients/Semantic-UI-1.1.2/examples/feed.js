@@ -1,23 +1,14 @@
-$(document)
-  .ready(function() {
+'use strict';
 
-    $('.filter.menu .item')
-      .tab()
-    ;
+$(document).ready(function () {
 
-    $('.ui.rating')
-      .rating({
-        clearable: true
-      })
-    ;
+  $('.filter.menu .item').tab();
 
-    $('.ui.sidebar')
-      .sidebar('attach events', '.launch.button')
-    ;
+  $('.ui.rating').rating({
+    clearable: true
+  });
 
-    $('.ui.dropdown')
-      .dropdown()
-    ;
+  $('.ui.sidebar').sidebar('attach events', '.launch.button');
 
-  })
-;
+  $('.ui.dropdown').dropdown();
+});

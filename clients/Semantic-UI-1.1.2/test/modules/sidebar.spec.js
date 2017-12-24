@@ -1,8 +1,9 @@
-describe("UI Rating", function() {
+'use strict';
+
+describe("UI Rating", function () {
 
   moduleTests({
-    module  : 'rating',
-    element : '.ui.rating'
+    module: 'rating',
+    element: '.ui.rating'
   });
-
 });

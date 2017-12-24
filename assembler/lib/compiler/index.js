@@ -1,3 +1,5 @@
+"use strict";
+
 // Dependencies
 var Util = require("arc-util");
 
@@ -12,7 +14,7 @@ var Util = require("arc-util");
  * @return {String} The binary representation of the input number.
  */
 function handleNumber(r, length) {
-    var value = ""
+    var value = "";
     // hex
     if (/^\-?0x|H$/.test(r)) {
         value = parseInt(r.replace("-", ""), 16);
@@ -48,9 +50,7 @@ function compile(line, parsed) {
 
         // %r0+x
         if (/^\%r[0-9]+\+[a-z]+$/.test(r)) {
-            return Util.pad(Util.addBin(
-                bR(r.replace(/\+[a-z]+$/g, "")), bR("[" + r.match(/\+([a-z]+)/)[0] + "]")
-            ), length);
+            return Util.pad(Util.addBin(bR(r.replace(/\+[a-z]+$/g, "")), bR("[" + r.match(/\+([a-z]+)/)[0] + "]")), length);
         }
 
         // %r0+4
@@ -68,9 +68,8 @@ function compile(line, parsed) {
 
         // [x]
         if (Util.isLocAdd(r)) {
-            var add = r.match(/^\[([a-z,_]+)\]$/)[1]
-              , loc = parsed.addresses[add]
-              ;
+            var add = r.match(/^\[([a-z,_]+)\]$/)[1],
+                loc = parsed.addresses[add];
 
             if (!loc) {
                 throw new Error("Invalid memory location: " + add);
@@ -175,7 +174,7 @@ function compile(line, parsed) {
                     instruction += rd;
 
                     // op
-                    instruction += ("000100");
+                    instruction += "000100";
 
                     // rs1
                     instruction += rs1;
@@ -269,7 +268,7 @@ function compile(line, parsed) {
                     instruction += rd;
 
                     // op
-                    instruction += ("010000");
+                    instruction += "010000";
 
                     // rs1
                     instruction += rs1;
@@ -434,9 +433,11 @@ function compile(line, parsed) {
                 }
             // Control
             case "call":
-                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for call instruction."); }
+                if (line.iArgs.length > 1) {
+                    throw new Error("Too many argumnets for call instruction.");
+                }
                 if (!parsed.addresses[line.iArgs[0]]) {
-                    throw new Error("Subrutine " +line.iArgs[0] + " doesn't exist");
+                    throw new Error("Subrutine " + line.iArgs[0] + " doesn't exist");
                 }
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 30);
                 break;
@@ -455,34 +456,44 @@ function compile(line, parsed) {
                 }
                 break;
             case "be":
-                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for be instruction."); }
+                if (line.iArgs.length > 1) {
+                    throw new Error("Too many argumnets for be instruction.");
+                }
                 instruction += "0";
                 instruction += "0001";
                 instruction += "010";
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
                 break;
             case "bcs":
-                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bcs instruction."); }
+                if (line.iArgs.length > 1) {
+                    throw new Error("Too many argumnets for bcs instruction.");
+                }
                 instruction += "0";
                 instruction += "0101";
                 instruction += "010";
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
             case "bneg":
-                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bneg instruction."); }
+                if (line.iArgs.length > 1) {
+                    throw new Error("Too many argumnets for bneg instruction.");
+                }
                 instruction += "0";
                 instruction += "0110";
                 instruction += "010";
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
                 break;
             case "bvs":
-                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for bvs instruction."); }
+                if (line.iArgs.length > 1) {
+                    throw new Error("Too many argumnets for bvs instruction.");
+                }
                 instruction += "0";
                 instruction += "0111";
                 instruction += "010";
                 instruction += Util.pad(parsed.addresses[line.iArgs[0]].address.toString(2), 22);
                 break;
             case "ba":
-                if (line.iArgs.length > 1) { throw new Error("Too many argumnets for ba instruction."); }
+                if (line.iArgs.length > 1) {
+                    throw new Error("Too many argumnets for ba instruction.");
+                }
                 instruction += "0";
                 instruction += "1000";
                 instruction += "010";

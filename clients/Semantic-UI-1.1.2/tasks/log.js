@@ -1,8 +1,10 @@
+"use strict";
+
 module.exports = {
-  created: function(file) {
+  created: function created(file) {
     return "Created: " + file;
   },
-  modified: function(file) {
+  modified: function modified(file) {
     return "Modified: " + file;
   }
 };

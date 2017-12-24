@@ -1,12 +1,14 @@
+"use strict";
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 // Dependencies
-var Parse = require("./parser")
-  , Compile = require("./compiler")
-  , Util = require("arc-util")
-  ;
+var Parse = require("./parser"),
+    Compile = require("./compiler"),
+    Util = require("arc-util");
 
 // Constructor
 var ArcAssembler = module.exports = {};
-
 
 /**
  * parse
@@ -61,12 +63,13 @@ ArcAssembler.compile = function (lines) {
         lines = lines.split("\n");
     }
     var parsed = Parse(lines);
-    var size = Math.max.apply(null, parsed.lines.map(function (c) { return c.address || -1; }));
+    var size = Math.max.apply(null, parsed.lines.map(function (c) {
+        return c.address || -1;
+    }));
     result.mCode = [];
     for (var i = 0; i < size * 8; ++i) {
         result.mCode.push(0);
     }
-
 
     function setBits(sAddress, bits) {
         if (typeof bits === "string") {
@@ -85,10 +88,12 @@ ArcAssembler.compile = function (lines) {
             return;
         }
         var ins = ArcAssembler.compileLine(c, parsed);
-        if (!ins.length) { return; }
+        if (!ins.length) {
+            return;
+        }
         result.raw.push({
-            code: ins
-          , line: i + 1
+            code: ins,
+            line: i + 1
         });
         setBits(c.address, ins);
     });
@@ -96,6 +101,6 @@ ArcAssembler.compile = function (lines) {
 };
 
 // Browser support
-if (typeof window === "object") {
+if ((typeof window === "undefined" ? "undefined" : _typeof(window)) === "object") {
     window.ArcAssembler = ArcAssembler;
 }

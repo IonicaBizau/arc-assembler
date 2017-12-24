@@ -1,10 +1,11 @@
-describe("UI Accordion", function() {
+'use strict';
+
+describe("UI Accordion", function () {
 
   $.fn.dimmer.settings.debug = false;
 
   moduleTests({
-    module  : 'accordion',
-    element : '.ui.accordion'
+    module: 'accordion',
+    element: '.ui.accordion'
   });
-
 });

@@ -1,42 +1,38 @@
+'use strict';
+
 // Karma configuration
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
 
     // base path, that will be used to resolve files and exclude
     basePath: '',
 
     // frameworks to use
-    frameworks: [
-      'jasmine'
-    ],
+    frameworks: ['jasmine'],
 
     // list of files / patterns to load in the browser
     files: [
-      // require jquery
-      'server/files/javascript/library/jquery.js',
-      // read css from compiled css
-      'docs/build/uncompressed/**/*.css',
-      // read js from src js
-      'src/definitions/**/*.js',
-      // require helpers
-      'test/helpers/*.js',
-      // require fixtures
-      {
-        pattern  : 'test/fixtures/*.html',
-        included : false,
-        served   : true
-      },
-      // require spec
-      'test/modules/module.spec.js',
-      // require tests
-      'test/modules/*.js'
-    ],
+    // require jquery
+    'server/files/javascript/library/jquery.js',
+    // read css from compiled css
+    'docs/build/uncompressed/**/*.css',
+    // read js from src js
+    'src/definitions/**/*.js',
+    // require helpers
+    'test/helpers/*.js',
+    // require fixtures
+    {
+      pattern: 'test/fixtures/*.html',
+      included: false,
+      served: true
+    },
+    // require spec
+    'test/modules/module.spec.js',
+    // require tests
+    'test/modules/*.js'],
 
     // list of files to exclude
-    exclude: [
-      '**/*.swp',
-      'karma.conf.js'
-    ],
+    exclude: ['**/*.swp', 'karma.conf.js'],
 
     preprocessors: {
       '**/*.html': [],
@@ -73,7 +69,6 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: ['PhantomJS'],
-
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 60000,

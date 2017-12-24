@@ -1,3 +1,5 @@
+"use strict";
+
 // Constructor
 var Util = module.exports = {};
 
@@ -15,7 +17,9 @@ var Util = module.exports = {};
 Util.pad = function (input, l, c) {
     c = c || "0";
     l = l || 32;
-    var pad = Array.apply(null, Array(l)).map(function () { return c; }).join("");
+    var pad = Array.apply(null, Array(l)).map(function () {
+        return c;
+    }).join("");
     return (pad + input).slice(-l);
 };
 
@@ -29,7 +33,8 @@ Util.pad = function (input, l, c) {
  * @return {Boolean} A boolean value representing whether the input is a register or not.
  */
 Util.isRegister = function (inp) {
-    return /^\%r[0-9]+$/.test(inp);
+    return (/^\%r[0-9]+$/.test(inp)
+    );
 };
 
 /**
@@ -42,7 +47,8 @@ Util.isRegister = function (inp) {
  * @return {Boolean} A boolean value representing whether the input is a location address or not.
  */
 Util.isLocAdd = function (inp) {
-    return /^\[[a-z,_]+\]$/.test(inp);
+    return (/^\[[a-z,_]+\]$/.test(inp)
+    );
 };
 
 /**
@@ -117,5 +123,6 @@ Util.bin = function (input, l) {
  * @return {Boolean} A boolean value representing whether the input is a valid number or not.
  */
 Util.isNumber = function (c) {
-    return /(^\-?[0-9]+$)|(^\-?0x)|H$/.test(c);
-}
+    return (/(^\-?[0-9]+$)|(^\-?0x)|H$/.test(c)
+    );
+};

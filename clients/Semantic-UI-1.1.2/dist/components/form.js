@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  * # Semantic - Form Validation
  * http://github.com/semantic-org/semantic-ui/
@@ -9,196 +11,142 @@
  *
  */
 
-;(function ( $, window, document, undefined ) {
+;(function ($, window, document, undefined) {
 
-$.fn.form = function(fields, parameters) {
-  var
-    $allModules     = $(this),
+  $.fn.form = function (fields, parameters) {
+    var $allModules = $(this),
+        settings = $.extend(true, {}, $.fn.form.settings, parameters),
+        _validation = $.extend({}, $.fn.form.settings.defaults, fields),
+        namespace = settings.namespace,
+        metadata = settings.metadata,
+        selector = settings.selector,
+        className = settings.className,
+        error = settings.error,
+        eventNamespace = '.' + namespace,
+        moduleNamespace = 'module-' + namespace,
+        moduleSelector = $allModules.selector || '',
+        time = new Date().getTime(),
+        performance = [],
+        query = arguments[0],
+        methodInvoked = typeof query == 'string',
+        queryArguments = [].slice.call(arguments, 1),
+        returnedValue;
+    $allModules.each(function () {
+      var $module = $(this),
+          $field = $(this).find(selector.field),
+          $group = $(this).find(selector.group),
+          $message = $(this).find(selector.message),
+          $prompt = $(this).find(selector.prompt),
+          $submit = $(this).find(selector.submit),
+          formErrors = [],
+          element = this,
+          instance = $module.data(moduleNamespace),
+          module;
 
-    settings        = $.extend(true, {}, $.fn.form.settings, parameters),
-    validation      = $.extend({}, $.fn.form.settings.defaults, fields),
+      module = {
 
-    namespace       = settings.namespace,
-    metadata        = settings.metadata,
-    selector        = settings.selector,
-    className       = settings.className,
-    error           = settings.error,
-
-    eventNamespace  = '.' + namespace,
-    moduleNamespace = 'module-' + namespace,
-
-    moduleSelector  = $allModules.selector || '',
-
-    time            = new Date().getTime(),
-    performance     = [],
-
-    query           = arguments[0],
-    methodInvoked   = (typeof query == 'string'),
-    queryArguments  = [].slice.call(arguments, 1),
-    returnedValue
-  ;
-  $allModules
-    .each(function() {
-      var
-        $module    = $(this),
-        $field     = $(this).find(selector.field),
-        $group     = $(this).find(selector.group),
-        $message   = $(this).find(selector.message),
-        $prompt    = $(this).find(selector.prompt),
-        $submit    = $(this).find(selector.submit),
-
-        formErrors = [],
-
-        element    = this,
-        instance   = $module.data(moduleNamespace),
-        module
-      ;
-
-      module      = {
-
-        initialize: function() {
-          module.verbose('Initializing form validation', $module, validation, settings);
+        initialize: function initialize() {
+          module.verbose('Initializing form validation', $module, _validation, settings);
           module.bindEvents();
           module.instantiate();
         },
 
-        instantiate: function() {
+        instantiate: function instantiate() {
           module.verbose('Storing instance of module', module);
           instance = module;
-          $module
-            .data(moduleNamespace, module)
-          ;
+          $module.data(moduleNamespace, module);
         },
 
-        destroy: function() {
+        destroy: function destroy() {
           module.verbose('Destroying previous module', instance);
           module.removeEvents();
-          $module
-            .removeData(moduleNamespace)
-          ;
+          $module.removeData(moduleNamespace);
         },
 
-        refresh: function() {
+        refresh: function refresh() {
           module.verbose('Refreshing selector cache');
           $field = $module.find(selector.field);
         },
 
-        submit: function() {
+        submit: function submit() {
           module.verbose('Submitting form', $module);
-          $module
-            .submit()
-          ;
+          $module.submit();
         },
 
-        attachEvents: function(selector, action) {
+        attachEvents: function attachEvents(selector, action) {
           action = action || 'submit';
-          $(selector)
-            .on('click', function(event) {
-              module[action]();
-              event.preventDefault();
-            })
-          ;
+          $(selector).on('click', function (event) {
+            module[action]();
+            event.preventDefault();
+          });
         },
 
-        bindEvents: function() {
+        bindEvents: function bindEvents() {
 
-          if(settings.keyboardShortcuts) {
-            $field
-              .on('keydown' + eventNamespace, module.event.field.keydown)
-            ;
+          if (settings.keyboardShortcuts) {
+            $field.on('keydown' + eventNamespace, module.event.field.keydown);
           }
-          $module
-            .on('submit' + eventNamespace, module.validate.form)
-          ;
-          $field
-            .on('blur' + eventNamespace, module.event.field.blur)
-          ;
+          $module.on('submit' + eventNamespace, module.validate.form);
+          $field.on('blur' + eventNamespace, module.event.field.blur);
           // attach submit events
           module.attachEvents($submit, 'submit');
 
-          $field
-            .each(function() {
-              var
-                type       = $(this).prop('type'),
-                inputEvent = module.get.changeEvent(type)
-              ;
-              $(this)
-                .on(inputEvent + eventNamespace, module.event.field.change)
-              ;
-            })
-          ;
+          $field.each(function () {
+            var type = $(this).prop('type'),
+                inputEvent = module.get.changeEvent(type);
+            $(this).on(inputEvent + eventNamespace, module.event.field.change);
+          });
         },
 
-        removeEvents: function() {
-          $module
-            .off(eventNamespace)
-          ;
-          $field
-            .off(eventNamespace)
-          ;
-          $submit
-            .off(eventNamespace)
-          ;
-          $field
-            .off(eventNamespace)
-          ;
+        removeEvents: function removeEvents() {
+          $module.off(eventNamespace);
+          $field.off(eventNamespace);
+          $submit.off(eventNamespace);
+          $field.off(eventNamespace);
         },
 
         event: {
           field: {
-            keydown: function(event) {
-              var
-                $field  = $(this),
-                key     = event.which,
-                keyCode = {
-                  enter  : 13,
-                  escape : 27
-                }
-              ;
-              if( key == keyCode.escape) {
+            keydown: function keydown(event) {
+              var $field = $(this),
+                  key = event.which,
+                  keyCode = {
+                enter: 13,
+                escape: 27
+              };
+              if (key == keyCode.escape) {
                 module.verbose('Escape key pressed blurring field');
-                $field
-                  .blur()
-                ;
+                $field.blur();
               }
-              if(!event.ctrlKey && key == keyCode.enter && $field.is(selector.input) && $field.not(selector.checkbox).size() > 0 ) {
+              if (!event.ctrlKey && key == keyCode.enter && $field.is(selector.input) && $field.not(selector.checkbox).size() > 0) {
                 module.debug('Enter key pressed, submitting form');
-                $submit
-                  .addClass(className.down)
-                ;
-                $field
-                  .one('keyup' + eventNamespace, module.event.field.keyup)
-                ;
+                $submit.addClass(className.down);
+                $field.one('keyup' + eventNamespace, module.event.field.keyup);
               }
             },
-            keyup: function() {
+            keyup: function keyup() {
               module.verbose('Doing keyboard shortcut form submit');
               $submit.removeClass(className.down);
               module.submit();
             },
-            blur: function() {
-              var
-                $field      = $(this),
-                $fieldGroup = $field.closest($group)
-              ;
-              if( $fieldGroup.hasClass(className.error) ) {
-                module.debug('Revalidating field', $field,  module.get.validation($field));
-                module.validate.field( module.get.validation($field) );
-              }
-              else if(settings.on == 'blur' || settings.on == 'change') {
-                module.validate.field( module.get.validation($field) );
+            blur: function blur() {
+              var $field = $(this),
+                  $fieldGroup = $field.closest($group);
+              if ($fieldGroup.hasClass(className.error)) {
+                module.debug('Revalidating field', $field, module.get.validation($field));
+                module.validate.field(module.get.validation($field));
+              } else if (settings.on == 'blur' || settings.on == 'change') {
+                module.validate.field(module.get.validation($field));
               }
             },
-            change: function() {
-              var
-                $field      = $(this),
-                $fieldGroup = $field.closest($group)
-              ;
-              if(settings.on == 'change' || ( $fieldGroup.hasClass(className.error) && settings.revalidate) ) {
+            change: function change() {
+              var $field = $(this),
+                  $fieldGroup = $field.closest($group);
+              if (settings.on == 'change' || $fieldGroup.hasClass(className.error) && settings.revalidate) {
                 clearTimeout(module.timer);
-                module.timer = setTimeout(function() {
-                  module.debug('Revalidating field', $field,  module.get.validation($field));
-                  module.validate.field( module.get.validation($field) );
+                module.timer = setTimeout(function () {
+                  module.debug('Revalidating field', $field, module.get.validation($field));
+                  module.validate.field(module.get.validation($field));
                 }, settings.delay);
               }
             }
@@ -207,38 +155,28 @@ $.fn.form = function(fields, parameters) {
         },
 
         get: {
-          changeEvent: function(type) {
-            if(type == 'checkbox' || type == 'radio' || type == 'hidden') {
+          changeEvent: function changeEvent(type) {
+            if (type == 'checkbox' || type == 'radio' || type == 'hidden') {
               return 'change';
-            }
-            else {
-              return (document.createElement('input').oninput !== undefined)
-                ? 'input'
-                : (document.createElement('input').onpropertychange !== undefined)
-                  ? 'propertychange'
-                  : 'keyup'
-              ;
+            } else {
+              return document.createElement('input').oninput !== undefined ? 'input' : document.createElement('input').onpropertychange !== undefined ? 'propertychange' : 'keyup';
             }
           },
-          field: function(identifier) {
+          field: function field(identifier) {
             module.verbose('Finding field with identifier', identifier);
-            if( $field.filter('#' + identifier).size() > 0 ) {
+            if ($field.filter('#' + identifier).size() > 0) {
               return $field.filter('#' + identifier);
-            }
-            else if( $field.filter('[name="' + identifier +'"]').size() > 0 ) {
-              return $field.filter('[name="' + identifier +'"]');
-            }
-            else if( $field.filter('[data-' + metadata.validate + '="'+ identifier +'"]').size() > 0 ) {
-              return $field.filter('[data-' + metadata.validate + '="'+ identifier +'"]');
+            } else if ($field.filter('[name="' + identifier + '"]').size() > 0) {
+              return $field.filter('[name="' + identifier + '"]');
+            } else if ($field.filter('[data-' + metadata.validate + '="' + identifier + '"]').size() > 0) {
+              return $field.filter('[data-' + metadata.validate + '="' + identifier + '"]');
             }
             return $('<input/>');
           },
-          validation: function($field) {
-            var
-              rules
-            ;
-            $.each(validation, function(fieldName, field) {
-              if( module.get.field(field.identifier).get(0) == $field.get(0) ) {
+          validation: function validation($field) {
+            var rules;
+            $.each(_validation, function (fieldName, field) {
+              if (module.get.field(field.identifier).get(0) == $field.get(0)) {
                 rules = field;
               }
             });
@@ -248,15 +186,13 @@ $.fn.form = function(fields, parameters) {
 
         has: {
 
-          field: function(identifier) {
+          field: function field(identifier) {
             module.verbose('Checking for existence of a field with identifier', identifier);
-            if( $field.filter('#' + identifier).size() > 0 ) {
+            if ($field.filter('#' + identifier).size() > 0) {
               return true;
-            }
-            else if( $field.filter('[name="' + identifier +'"]').size() > 0 ) {
+            } else if ($field.filter('[name="' + identifier + '"]').size() > 0) {
               return true;
-            }
-            else if( $field.filter('[data-' + metadata.validate + '="'+ identifier +'"]').size() > 0 ) {
+            } else if ($field.filter('[data-' + metadata.validate + '="' + identifier + '"]').size() > 0) {
               return true;
             }
             return false;
@@ -265,126 +201,93 @@ $.fn.form = function(fields, parameters) {
         },
 
         add: {
-          prompt: function(identifier, errors) {
-            var
-              $field       = module.get.field(identifier),
-              $fieldGroup  = $field.closest($group),
-              $prompt      = $fieldGroup.find(selector.prompt),
-              promptExists = ($prompt.size() !== 0)
-            ;
-            errors = (typeof errors == 'string')
-              ? [errors]
-              : errors
-            ;
+          prompt: function prompt(identifier, errors) {
+            var $field = module.get.field(identifier),
+                $fieldGroup = $field.closest($group),
+                $prompt = $fieldGroup.find(selector.prompt),
+                promptExists = $prompt.size() !== 0;
+            errors = typeof errors == 'string' ? [errors] : errors;
             module.verbose('Adding field error state', identifier);
-            $fieldGroup
-              .addClass(className.error)
-            ;
-            if(settings.inline) {
-              if(!promptExists) {
+            $fieldGroup.addClass(className.error);
+            if (settings.inline) {
+              if (!promptExists) {
                 $prompt = settings.templates.prompt(errors);
-                $prompt
-                  .appendTo($fieldGroup)
-                ;
+                $prompt.appendTo($fieldGroup);
               }
-              $prompt
-                .html(errors[0])
-              ;
-              if(!promptExists) {
-                if(settings.transition && $.fn.transition !== undefined && $module.transition('is supported')) {
+              $prompt.html(errors[0]);
+              if (!promptExists) {
+                if (settings.transition && $.fn.transition !== undefined && $module.transition('is supported')) {
                   module.verbose('Displaying error with css transition', settings.transition);
                   $prompt.transition(settings.transition + ' in', settings.duration);
-                }
-                else {
+                } else {
                   module.verbose('Displaying error with fallback javascript animation');
-                  $prompt
-                    .fadeIn(settings.duration)
-                  ;
+                  $prompt.fadeIn(settings.duration);
                 }
-              }
-              else {
+              } else {
                 module.verbose('Inline errors are disabled, no inline error added', identifier);
               }
             }
           },
-          errors: function(errors) {
-            module.debug('Adding form error messages', errors);
-            $message
-              .html( settings.templates.error(errors) )
-            ;
+          errors: function errors(_errors) {
+            module.debug('Adding form error messages', _errors);
+            $message.html(settings.templates.error(_errors));
           }
         },
 
         remove: {
-          prompt: function(field) {
-            var
-              $field      = module.get.field(field.identifier),
-              $fieldGroup = $field.closest($group),
-              $prompt     = $fieldGroup.find(selector.prompt)
-            ;
-            $fieldGroup
-              .removeClass(className.error)
-            ;
-            if(settings.inline && $prompt.is(':visible')) {
+          prompt: function prompt(field) {
+            var $field = module.get.field(field.identifier),
+                $fieldGroup = $field.closest($group),
+                $prompt = $fieldGroup.find(selector.prompt);
+            $fieldGroup.removeClass(className.error);
+            if (settings.inline && $prompt.is(':visible')) {
               module.verbose('Removing prompt for field', field);
-              if(settings.transition && $.fn.transition !== undefined && $module.transition('is supported')) {
-                $prompt.transition(settings.transition + ' out', settings.duration, function() {
+              if (settings.transition && $.fn.transition !== undefined && $module.transition('is supported')) {
+                $prompt.transition(settings.transition + ' out', settings.duration, function () {
                   $prompt.remove();
                 });
-              }
-              else {
-                $prompt
-                  .fadeOut(settings.duration, function(){
-                    $prompt.remove();
-                  })
-                ;
+              } else {
+                $prompt.fadeOut(settings.duration, function () {
+                  $prompt.remove();
+                });
               }
             }
           }
         },
 
         set: {
-          success: function() {
-            $module
-              .removeClass(className.error)
-              .addClass(className.success)
-            ;
+          success: function success() {
+            $module.removeClass(className.error).addClass(className.success);
           },
-          error: function() {
-            $module
-              .removeClass(className.success)
-              .addClass(className.error)
-            ;
+          error: function error() {
+            $module.removeClass(className.success).addClass(className.error);
           }
         },
 
         validate: {
 
-          form: function(event) {
-            var
-              allValid = true,
-              apiRequest
-            ;
+          form: function form(event) {
+            var allValid = true,
+                apiRequest;
             // reset errors
             formErrors = [];
-            $.each(validation, function(fieldName, field) {
-              if( !( module.validate.field(field) ) ) {
+            $.each(_validation, function (fieldName, field) {
+              if (!module.validate.field(field)) {
                 allValid = false;
               }
             });
-            if(allValid) {
+            if (allValid) {
               module.debug('Form has no validation errors, submitting');
               module.set.success();
               return $.proxy(settings.onSuccess, this)(event);
-            }
-            else {
+            } else {
               module.debug('Form has errors');
               module.set.error();
-              if(!settings.inline) {
+              if (!settings.inline) {
                 module.add.errors(formErrors);
               }
               // prevent ajax submit
-              if($module.data('moduleApi') !== undefined) {
+              if ($module.data('moduleApi') !== undefined) {
                 event.stopImmediatePropagation();
               }
               return $.proxy(settings.onFailure, this)(formErrors);
@@ -392,28 +295,25 @@ $.fn.form = function(fields, parameters) {
           },
 
           // takes a validation object and returns whether field passes validation
-          field: function(field) {
-            var
-              $field      = module.get.field(field.identifier),
-              fieldValid  = true,
-              fieldErrors = []
-            ;
-            if(field.rules !== undefined) {
-              $.each(field.rules, function(index, rule) {
-                if( module.has.field(field.identifier) && !( module.validate.rule(field, rule) ) ) {
-                  module.debug('Field is invalid', field.identifier, rule.type);
+          field: function field(_field) {
+            var $field = module.get.field(_field.identifier),
+                fieldValid = true,
+                fieldErrors = [];
+            if (_field.rules !== undefined) {
+              $.each(_field.rules, function (index, rule) {
+                if (module.has.field(_field.identifier) && !module.validate.rule(_field, rule)) {
+                  module.debug('Field is invalid', _field.identifier, rule.type);
                   fieldErrors.push(rule.prompt);
                   fieldValid = false;
                 }
               });
             }
-            if(fieldValid) {
-              module.remove.prompt(field, fieldErrors);
+            if (fieldValid) {
+              module.remove.prompt(_field, fieldErrors);
               $.proxy(settings.onValid, $field)();
-            }
-            else {
+            } else {
               formErrors = formErrors.concat(fieldErrors);
-              module.add.prompt(field.identifier, fieldErrors);
+              module.add.prompt(_field.identifier, fieldErrors);
               $.proxy(settings.onInvalid, $field)(fieldErrors);
               return false;
             }
@@ -421,127 +321,111 @@ $.fn.form = function(fields, parameters) {
           },
 
           // takes validation rule and returns whether field passes rule
-          rule: function(field, validation) {
-            var
-              $field        = module.get.field(field.identifier),
-              type          = validation.type,
-              value         = $.trim($field.val() + ''),
-
-              bracketRegExp = /\[(.*)\]/i,
-              bracket       = bracketRegExp.exec(type),
-              isValid       = true,
-              ancillary,
-              functionType
-            ;
+          rule: function rule(field, validation) {
+            var $field = module.get.field(field.identifier),
+                type = validation.type,
+                value = $.trim($field.val() + ''),
+                bracketRegExp = /\[(.*)\]/i,
+                bracket = bracketRegExp.exec(type),
+                isValid = true,
+                ancillary,
+                functionType;
             // if bracket notation is used, pass in extra parameters
-            if(bracket !== undefined && bracket !== null) {
-              ancillary    = '' + bracket[1];
+            if (bracket !== undefined && bracket !== null) {
+              ancillary = '' + bracket[1];
               functionType = type.replace(bracket[0], '');
-              isValid      = $.proxy(settings.rules[functionType], $module)(value, ancillary);
+              isValid = $.proxy(settings.rules[functionType], $module)(value, ancillary);
             }
             // normal notation
             else {
-              isValid = $.proxy(settings.rules[type], $field)(value);
-            }
+                isValid = $.proxy(settings.rules[type], $field)(value);
+              }
             return isValid;
           }
         },
 
-        setting: function(name, value) {
-          if( $.isPlainObject(name) ) {
+        setting: function setting(name, value) {
+          if ($.isPlainObject(name)) {
             $.extend(true, settings, name);
-          }
-          else if(value !== undefined) {
+          } else if (value !== undefined) {
             settings[name] = value;
-          }
-          else {
+          } else {
             return settings[name];
           }
         },
-        internal: function(name, value) {
-          if( $.isPlainObject(name) ) {
+        internal: function internal(name, value) {
+          if ($.isPlainObject(name)) {
             $.extend(true, module, name);
-          }
-          else if(value !== undefined) {
+          } else if (value !== undefined) {
             module[name] = value;
-          }
-          else {
+          } else {
             return module[name];
           }
         },
-        debug: function() {
-          if(settings.debug) {
-            if(settings.performance) {
+        debug: function debug() {
+          if (settings.debug) {
+            if (settings.performance) {
               module.performance.log(arguments);
-            }
-            else {
+            } else {
               module.debug = Function.prototype.bind.call(console.info, console, settings.name + ':');
               module.debug.apply(console, arguments);
             }
           }
         },
-        verbose: function() {
-          if(settings.verbose && settings.debug) {
-            if(settings.performance) {
+        verbose: function verbose() {
+          if (settings.verbose && settings.debug) {
+            if (settings.performance) {
               module.performance.log(arguments);
-            }
-            else {
+            } else {
               module.verbose = Function.prototype.bind.call(console.info, console, settings.name + ':');
               module.verbose.apply(console, arguments);
             }
           }
         },
-        error: function() {
+        error: function error() {
           module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
           module.error.apply(console, arguments);
         },
         performance: {
-          log: function(message) {
-            var
-              currentTime,
-              executionTime,
-              previousTime
-            ;
-            if(settings.performance) {
-              currentTime   = new Date().getTime();
-              previousTime  = time || currentTime;
+          log: function log(message) {
+            var currentTime, executionTime, previousTime;
+            if (settings.performance) {
+              currentTime = new Date().getTime();
+              previousTime = time || currentTime;
               executionTime = currentTime - previousTime;
-              time          = currentTime;
+              time = currentTime;
               performance.push({
-                'Name'           : message[0],
-                'Arguments'      : [].slice.call(message, 1) || '',
-                'Element'        : element,
-                'Execution Time' : executionTime
+                'Name': message[0],
+                'Arguments': [].slice.call(message, 1) || '',
+                'Element': element,
+                'Execution Time': executionTime
               });
             }
             clearTimeout(module.performance.timer);
             module.performance.timer = setTimeout(module.performance.display, 100);
           },
-          display: function() {
-            var
-              title = settings.name + ':',
-              totalTime = 0
-            ;
+          display: function display() {
+            var title = settings.name + ':',
+                totalTime = 0;
             time = false;
             clearTimeout(module.performance.timer);
-            $.each(performance, function(index, data) {
+            $.each(performance, function (index, data) {
               totalTime += data['Execution Time'];
             });
             title += ' ' + totalTime + 'ms';
-            if(moduleSelector) {
+            if (moduleSelector) {
               title += ' \'' + moduleSelector + '\'';
             }
-            if($allModules.size() > 1) {
+            if ($allModules.size() > 1) {
               title += ' ' + '(' + $allModules.size() + ')';
             }
-            if( (console.group !== undefined || console.table !== undefined) && performance.length > 0) {
+            if ((console.group !== undefined || console.table !== undefined) && performance.length > 0) {
               console.groupCollapsed(title);
-              if(console.table) {
+              if (console.table) {
                 console.table(performance);
-              }
-              else {
-                $.each(performance, function(index, data) {
-                  console.log(data['Name'] + ': ' + data['Execution Time']+'ms');
+              } else {
+                $.each(performance, function (index, data) {
+                  console.log(data['Name'] + ': ' + data['Execution Time'] + 'ms');
                 });
               }
               console.groupEnd();
@@ -549,247 +433,199 @@ $.fn.form = function(fields, parameters) {
             performance = [];
           }
         },
-        invoke: function(query, passedArguments, context) {
-          var
-            object = instance,
-            maxDepth,
-            found,
-            response
-          ;
+        invoke: function invoke(query, passedArguments, context) {
+          var object = instance,
+              maxDepth,
+              found,
+              response;
           passedArguments = passedArguments || queryArguments;
-          context         = element         || context;
-          if(typeof query == 'string' && object !== undefined) {
-            query    = query.split(/[\. ]/);
+          context = element || context;
+          if (typeof query == 'string' && object !== undefined) {
+            query = query.split(/[\. ]/);
             maxDepth = query.length - 1;
-            $.each(query, function(depth, value) {
-              var camelCaseValue = (depth != maxDepth)
-                ? value + query[depth + 1].charAt(0).toUpperCase() + query[depth + 1].slice(1)
-                : query
-              ;
-              if( $.isPlainObject( object[camelCaseValue] ) && (depth != maxDepth) ) {
+            $.each(query, function (depth, value) {
+              var camelCaseValue = depth != maxDepth ? value + query[depth + 1].charAt(0).toUpperCase() + query[depth + 1].slice(1) : query;
+              if ($.isPlainObject(object[camelCaseValue]) && depth != maxDepth) {
                 object = object[camelCaseValue];
-              }
-              else if( object[camelCaseValue] !== undefined ) {
+              } else if (object[camelCaseValue] !== undefined) {
                 found = object[camelCaseValue];
                 return false;
-              }
-              else if( $.isPlainObject( object[value] ) && (depth != maxDepth) ) {
+              } else if ($.isPlainObject(object[value]) && depth != maxDepth) {
                 object = object[value];
-              }
-              else if( object[value] !== undefined ) {
+              } else if (object[value] !== undefined) {
                 found = object[value];
                 return false;
-              }
-              else {
+              } else {
                 return false;
               }
             });
           }
-          if ( $.isFunction( found ) ) {
+          if ($.isFunction(found)) {
             response = found.apply(context, passedArguments);
-          }
-          else if(found !== undefined) {
+          } else if (found !== undefined) {
             response = found;
           }
-          if($.isArray(returnedValue)) {
+          if ($.isArray(returnedValue)) {
             returnedValue.push(response);
-          }
-          else if(returnedValue !== undefined) {
+          } else if (returnedValue !== undefined) {
             returnedValue = [returnedValue, response];
-          }
-          else if(response !== undefined) {
+          } else if (response !== undefined) {
             returnedValue = response;
           }
           return found;
         }
       };
-      if(methodInvoked) {
-        if(instance === undefined) {
+      if (methodInvoked) {
+        if (instance === undefined) {
           module.initialize();
         }
         module.invoke(query);
-      }
-      else {
-        if(instance !== undefined) {
+      } else {
+        if (instance !== undefined) {
           module.destroy();
         }
         module.initialize();
       }
+    });
 
-    })
-  ;
+    return returnedValue !== undefined ? returnedValue : this;
+  };
 
-  return (returnedValue !== undefined)
-    ? returnedValue
-    : this
-  ;
-};
+  $.fn.form.settings = {
 
-$.fn.form.settings = {
+    name: 'Form',
+    namespace: 'form',
 
-  name              : 'Form',
-  namespace         : 'form',
+    debug: false,
+    verbose: true,
+    performance: true,
 
-  debug             : false,
-  verbose           : true,
-  performance       : true,
+    keyboardShortcuts: true,
+    on: 'submit',
+    inline: false,
 
+    delay: 200,
+    revalidate: true,
 
-  keyboardShortcuts : true,
-  on                : 'submit',
-  inline            : false,
+    transition: 'scale',
+    duration: 150,
 
-  delay             : 200,
-  revalidate        : true,
-
-  transition        : 'scale',
-  duration          : 150,
-
-
-  onValid           : function() {},
-  onInvalid         : function() {},
-  onSuccess         : function() { return true; },
-  onFailure         : function() { return false; },
-
-  metadata : {
-    validate: 'validate'
-  },
-
-  selector : {
-    message : '.error.message',
-    field   : 'input, textarea, select',
-    group   : '.field',
-    checkbox: 'input[type="checkbox"], input[type="radio"]',
-    input   : 'input',
-    prompt  : '.prompt',
-    submit  : '.submit'
-  },
-
-  className : {
-    error   : 'error',
-    success : 'success',
-    down    : 'down',
-    label   : 'ui label prompt'
-  },
-
-  // errors
-  error: {
-    method   : 'The method you called is not defined.'
-  },
-
-
-  templates: {
-    error: function(errors) {
-      var
-        html = '<ul class="list">'
-      ;
-      $.each(errors, function(index, value) {
-        html += '<li>' + value + '</li>';
-      });
-      html += '</ul>';
-      return $(html);
+    onValid: function onValid() {},
+    onInvalid: function onInvalid() {},
+    onSuccess: function onSuccess() {
+      return true;
     },
-    prompt: function(errors) {
-      return $('<div/>')
-        .addClass('ui red pointing prompt label')
-        .html(errors[0])
-      ;
+    onFailure: function onFailure() {
+      return false;
+    },
+
+    metadata: {
+      validate: 'validate'
+    },
+
+    selector: {
+      message: '.error.message',
+      field: 'input, textarea, select',
+      group: '.field',
+      checkbox: 'input[type="checkbox"], input[type="radio"]',
+      input: 'input',
+      prompt: '.prompt',
+      submit: '.submit'
+    },
+
+    className: {
+      error: 'error',
+      success: 'success',
+      down: 'down',
+      label: 'ui label prompt'
+    },
+
+    // errors
+    error: {
+      method: 'The method you called is not defined.'
+    },
+
+    templates: {
+      error: function error(errors) {
+        var html = '<ul class="list">';
+        $.each(errors, function (index, value) {
+          html += '<li>' + value + '</li>';
+        });
+        html += '</ul>';
+        return $(html);
+      },
+      prompt: function prompt(errors) {
+        return $('<div/>').addClass('ui red pointing prompt label').html(errors[0]);
+      }
+    },
+
+    rules: {
+      checked: function checked() {
+        return $(this).filter(':checked').size() > 0;
+      },
+      empty: function empty(value) {
+        return !(value === undefined || '' === value);
+      },
+      email: function email(value) {
+        var emailRegExp = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", "i");
+        return emailRegExp.test(value);
+      },
+      length: function length(value, requiredLength) {
+        return value !== undefined ? value.length >= requiredLength : false;
+      },
+      not: function not(value, notValue) {
+        return value != notValue;
+      },
+      contains: function contains(value, text) {
+        text = text.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+        return value.search(text) !== -1;
+      },
+      is: function is(value, text) {
+        return value == text;
+      },
+      maxLength: function maxLength(value, _maxLength) {
+        return value !== undefined ? value.length <= _maxLength : false;
+      },
+      match: function match(value, fieldIdentifier) {
+        // use either id or name of field
+        var $form = $(this),
+            matchingValue;
+        if ($form.find('#' + fieldIdentifier).size() > 0) {
+          matchingValue = $form.find('#' + fieldIdentifier).val();
+        } else if ($form.find('[name="' + fieldIdentifier + '"]').size() > 0) {
+          matchingValue = $form.find('[name="' + fieldIdentifier + '"]').val();
+        } else if ($form.find('[data-validate="' + fieldIdentifier + '"]').size() > 0) {
+          matchingValue = $form.find('[data-validate="' + fieldIdentifier + '"]').val();
+        }
+        return matchingValue !== undefined ? value.toString() == matchingValue.toString() : false;
+      },
+      url: function url(value) {
+        var urlRegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+        return urlRegExp.test(value);
+      },
+      integer: function integer(value, range) {
+        var intRegExp = /^\-?\d+$/,
+            min,
+            max,
+            parts;
+        if (range === undefined || range === '' || range === '..') {
+          // do nothing
+        } else if (range.indexOf('..') == -1) {
+          if (intRegExp.test(range)) {
+            min = max = range - 0;
+          }
+        } else {
+          parts = range.split('..', 2);
+          if (intRegExp.test(parts[0])) {
+            min = parts[0] - 0;
+          }
+          if (intRegExp.test(parts[1])) {
+            max = parts[1] - 0;
+          }
+        }
+        return intRegExp.test(value) && (min === undefined || value >= min) && (max === undefined || value <= max);
+      }
     }
-  },
 
-  rules: {
-    checked: function() {
-      return ($(this).filter(':checked').size() > 0);
-    },
-    empty: function(value) {
-      return !(value === undefined || '' === value);
-    },
-    email: function(value){
-      var
-        emailRegExp = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", "i")
-      ;
-      return emailRegExp.test(value);
-    },
-    length: function(value, requiredLength) {
-      return (value !== undefined)
-        ? (value.length >= requiredLength)
-        : false
-      ;
-    },
-    not: function(value, notValue) {
-      return (value != notValue);
-    },
-    contains: function(value, text) {
-      text = text.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-      return (value.search(text) !== -1);
-    },
-    is: function(value, text) {
-      return (value == text);
-    },
-    maxLength: function(value, maxLength) {
-      return (value !== undefined)
-        ? (value.length <= maxLength)
-        : false
-      ;
-    },
-    match: function(value, fieldIdentifier) {
-      // use either id or name of field
-      var
-        $form = $(this),
-        matchingValue
-      ;
-      if($form.find('#' + fieldIdentifier).size() > 0) {
-        matchingValue = $form.find('#' + fieldIdentifier).val();
-      }
-      else if($form.find('[name="' + fieldIdentifier +'"]').size() > 0) {
-        matchingValue = $form.find('[name="' + fieldIdentifier + '"]').val();
-      }
-      else if( $form.find('[data-validate="'+ fieldIdentifier +'"]').size() > 0 ) {
-        matchingValue = $form.find('[data-validate="'+ fieldIdentifier +'"]').val();
-      }
-      return (matchingValue !== undefined)
-        ? ( value.toString() == matchingValue.toString() )
-        : false
-      ;
-    },
-    url: function(value) {
-      var
-        urlRegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-      ;
-      return urlRegExp.test(value);
-    },
-    integer: function(value, range) {
-      var
-        intRegExp = /^\-?\d+$/,
-        min,
-        max,
-        parts
-      ;
-      if (range === undefined || range === '' || range === '..') {
-        // do nothing
-      }
-      else if (range.indexOf('..') == -1) {
-        if (intRegExp.test(range)) {
-          min = max = range - 0;
-        }
-      }
-      else {
-        parts = range.split('..', 2);
-        if (intRegExp.test(parts[0])) {
-          min = parts[0] - 0;
-        }
-        if (intRegExp.test(parts[1])) {
-          max = parts[1] - 0;
-        }
-      }
-      return (
-        intRegExp.test(value) &&
-        (min === undefined || value >= min) &&
-        (max === undefined || value <= max)
-      );
-    }
-  }
-
-};
-
-})( jQuery, window , document );
+  };
+})(jQuery, window, document);

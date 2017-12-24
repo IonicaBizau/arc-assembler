@@ -1,8 +1,9 @@
-describe("UI Shape", function() {
+'use strict';
+
+describe("UI Shape", function () {
 
   moduleTests({
-    module    : 'shape',
-    element   : '.ui.shape'
+    module: 'shape',
+    element: '.ui.shape'
   });
-
 });

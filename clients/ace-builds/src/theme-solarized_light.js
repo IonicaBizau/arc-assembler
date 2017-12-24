@@ -1,8 +1,10 @@
-define("ace/theme/solarized_light",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+"use strict";
 
-exports.isDark = false;
-exports.cssClass = "ace-solarized-light";
-exports.cssText = ".ace-solarized-light .ace_gutter {\
+define("ace/theme/solarized_light", ["require", "exports", "module", "ace/lib/dom"], function (require, exports, module) {
+
+  exports.isDark = false;
+  exports.cssClass = "ace-solarized-light";
+  exports.cssText = ".ace-solarized-light .ace_gutter {\
 background: #fbf1d3;\
 color: #333\
 }\
@@ -87,6 +89,6 @@ color: #93A1A1\
 background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWNgYGBgYHjy8NJ/AAjgA5fzQUmBAAAAAElFTkSuQmCC) right repeat-y\
 }";
 
-var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass);
+  var dom = require("../lib/dom");
+  dom.importCssString(exports.cssText, exports.cssClass);
 });

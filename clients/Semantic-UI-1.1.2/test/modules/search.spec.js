@@ -1,8 +1,9 @@
-xdescribe("UI Search", function() {
+'use strict';
+
+xdescribe("UI Search", function () {
 
   moduleTests({
-    module    : 'search',
-    element   : '.ui.search'
+    module: 'search',
+    element: '.ui.search'
   });
-
 });

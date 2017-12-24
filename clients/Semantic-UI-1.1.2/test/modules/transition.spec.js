@@ -1,8 +1,9 @@
-xdescribe("UI Transition", function() {
+'use strict';
+
+xdescribe("UI Transition", function () {
 
   moduleTests({
-    module  : 'transition',
-    element : '.ui.image'
+    module: 'transition',
+    element: '.ui.image'
   });
-
 });

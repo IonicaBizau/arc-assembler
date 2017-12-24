@@ -1,8 +1,9 @@
-xdescribe("UI Popup", function() {
+'use strict';
+
+xdescribe("UI Popup", function () {
 
   moduleTests({
-    module  : 'popup',
-    element : 'i.icon'
+    module: 'popup',
+    element: 'i.icon'
   });
-
 });

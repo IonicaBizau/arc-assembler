@@ -1,7 +1,9 @@
+"use strict";
+
 // Window process
 window.Process = {
     stdout: {
-        write: function (c) {
+        write: function write(c) {
             window.onStdOutWrite(c);
         }
     }
@@ -20,7 +22,9 @@ $(document).ready(function () {
             var result = ArcAssembler.compile(editor.getValue());
         } catch (e) {
             $("pre.machine-code").html(e.message);
-            if (!showErr) { return; }
+            if (!showErr) {
+                return;
+            }
             $(".error.modal").modal("show").find(".content > .err").text(e.message);
             return;
         }
@@ -32,7 +36,7 @@ $(document).ready(function () {
 
         $("pre.machine-code").html(output);
         try {
-            var iResult = ArcInterpreter.interpret(result.mCode)
+            var iResult = ArcInterpreter.interpret(result.mCode);
             $("pre.result").html(iResult);
             var reg = {};
             Object.keys(ArcInterpreter.r).forEach(function (c, i) {
@@ -47,7 +51,6 @@ $(document).ready(function () {
         if (stdout) {
             $("pre.stdout").html(stdout).show().prev().show();
         }
-
     }
 
     var editor = ace.edit("editor");
@@ -67,10 +70,11 @@ $(document).ready(function () {
     compileAndUpdateMCode();
 
     $("h3").on("click", function () {
-        var $this = $(this)
-          , $next = $this.next()
-          ;
-        if (!$next.is("pre")) { return; }
+        var $this = $(this),
+            $next = $this.next();
+        if (!$next.is("pre")) {
+            return;
+        }
         $next.toggle();
     });
 });

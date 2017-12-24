@@ -1,8 +1,10 @@
-define("ace/theme/github",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+"use strict";
 
-exports.isDark = false;
-exports.cssClass = "ace-github";
-exports.cssText = "\
+define("ace/theme/github", ["require", "exports", "module", "ace/lib/dom"], function (require, exports, module) {
+
+    exports.isDark = false;
+    exports.cssClass = "ace-github";
+    exports.cssText = "\
 .ace-github .ace_gutter {\
 background: #e8e8e8;\
 color: #AAA;\

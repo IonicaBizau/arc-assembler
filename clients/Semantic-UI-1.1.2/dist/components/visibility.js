@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  * # Semantic - Visibility
  * http://github.com/semantic-org/semantic-ui/
@@ -9,55 +11,40 @@
  *
  */
 
-;(function ( $, window, document, undefined ) {
+;(function ($, window, document, undefined) {
 
-$.fn.visibility = function(parameters) {
-  var
-    $allModules    = $(this),
-    moduleSelector = $allModules.selector || '',
+  $.fn.visibility = function (parameters) {
+    var $allModules = $(this),
+        moduleSelector = $allModules.selector || '',
+        time = new Date().getTime(),
+        performance = [],
+        query = arguments[0],
+        methodInvoked = typeof query == 'string',
+        queryArguments = [].slice.call(arguments, 1),
+        returnedValue;
 
-    time           = new Date().getTime(),
-    performance    = [],
+    $allModules.each(function () {
+      var settings = $.extend(true, {}, $.fn.visibility.settings, parameters),
+          className = settings.className,
+          namespace = settings.namespace,
+          error = settings.error,
+          eventNamespace = '.' + namespace,
+          moduleNamespace = 'module-' + namespace,
+          $window = $(window),
+          $module = $(this),
+          $context = $(settings.context),
+          $container = $module.offsetParent(),
+          selector = $module.selector || '',
+          instance = $module.data(moduleNamespace),
+          requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
+        setTimeout(callback, 0);
+      },
+          element = this,
+          module;
 
-    query          = arguments[0],
-    methodInvoked  = (typeof query == 'string'),
-    queryArguments = [].slice.call(arguments, 1),
-    returnedValue
-  ;
+      module = {
 
-  $allModules
-    .each(function() {
-      var
-        settings        = $.extend(true, {}, $.fn.visibility.settings, parameters),
-
-        className       = settings.className,
-        namespace       = settings.namespace,
-        error           = settings.error,
-
-        eventNamespace  = '.' + namespace,
-        moduleNamespace = 'module-' + namespace,
-
-        $window         = $(window),
-        $module         = $(this),
-        $context        = $(settings.context),
-        $container      = $module.offsetParent(),
-
-        selector        = $module.selector || '',
-        instance        = $module.data(moduleNamespace),
-
-        requestAnimationFrame = window.requestAnimationFrame
-          || window.mozRequestAnimationFrame
-          || window.webkitRequestAnimationFrame
-          || window.msRequestAnimationFrame
-          || function(callback) { setTimeout(callback, 0); },
-
-        element         = this,
-        module
-      ;
-
-      module      = {
-
-        initialize: function() {
+        initialize: function initialize() {
           module.verbose('Initializing visibility', settings);
 
           module.setup.cache();
@@ -65,164 +52,136 @@ $.fn.visibility = function(parameters) {
           module.bindEvents();
           module.instantiate();
 
-          if(settings.type == 'image') {
+          if (settings.type == 'image') {
             module.setup.image();
           }
-          if(settings.type == 'fixed') {
+          if (settings.type == 'fixed') {
             module.setup.fixed();
           }
 
           requestAnimationFrame(module.checkVisibility);
         },
 
-        instantiate: function() {
+        instantiate: function instantiate() {
           module.verbose('Storing instance of module', module);
           instance = module;
-          $module
-            .data(moduleNamespace, module)
-          ;
+          $module.data(moduleNamespace, module);
         },
 
-        destroy: function() {
+        destroy: function destroy() {
           module.verbose('Destroying previous module');
-          $module
-            .off(eventNamespace)
-            .removeData(moduleNamespace)
-          ;
+          $module.off(eventNamespace).removeData(moduleNamespace);
         },
 
-        bindEvents: function() {
+        bindEvents: function bindEvents() {
           module.verbose('Binding visibility events to scroll and resize');
-          $window
-            .on('resize' + eventNamespace, module.event.refresh)
-          ;
-          $context
-            .on('scroll' + eventNamespace, module.event.scroll)
-          ;
+          $window.on('resize' + eventNamespace, module.event.refresh);
+          $context.on('scroll' + eventNamespace, module.event.scroll);
         },
 
         event: {
-          refresh: function() {
+          refresh: function refresh() {
             requestAnimationFrame(module.refresh);
           },
-          scroll: function() {
+          scroll: function scroll() {
             module.verbose('Scroll position changed');
-            if(settings.throttle) {
+            if (settings.throttle) {
               clearTimeout(module.timer);
               module.timer = setTimeout(module.checkVisibility, settings.throttle);
-            }
-            else {
+            } else {
               requestAnimationFrame(module.checkVisibility);
             }
           }
         },
 
-        precache: function(images, callback) {
+        precache: function precache(images, callback) {
           if (!(images instanceof Array)) {
             images = [images];
           }
-          var
-            imagesLength  = images.length,
-            loadedCounter = 0,
-            cache         = [],
-            cacheImage    = document.createElement('img'),
-            handleLoad    = function() {
-              loadedCounter++;
-              if (loadedCounter >= images.length) {
-                if ($.isFunction(callback)) {
-                  callback();
-                }
+          var imagesLength = images.length,
+              loadedCounter = 0,
+              cache = [],
+              cacheImage = document.createElement('img'),
+              handleLoad = function handleLoad() {
+            loadedCounter++;
+            if (loadedCounter >= images.length) {
+              if ($.isFunction(callback)) {
+                callback();
               }
             }
-          ;
+          };
           while (imagesLength--) {
-            cacheImage         = document.createElement('img');
-            cacheImage.onload  = handleLoad;
+            cacheImage = document.createElement('img');
+            cacheImage.onload = handleLoad;
             cacheImage.onerror = handleLoad;
-            cacheImage.src     = images[imagesLength];
+            cacheImage.src = images[imagesLength];
             cache.push(cacheImage);
           }
         },
 
         setup: {
-          cache: function() {
+          cache: function cache() {
             module.cache = {
-              occurred : {},
-              screen   : {},
-              element  : {},
+              occurred: {},
+              screen: {},
+              element: {}
             };
           },
-          image: function() {
-            var
-              src = $module.data('src')
-            ;
-            if(src) {
+          image: function image() {
+            var src = $module.data('src');
+            if (src) {
               module.verbose('Lazy loading image', src);
               // show when top visible
-              module.topVisible(function() {
-                module.precache(src, function() {
+              module.topVisible(function () {
+                module.precache(src, function () {
                   module.set.image(src);
                   settings.onTopVisible = false;
                 });
               });
             }
           },
-          fixed: function() {
+          fixed: function fixed() {
             module.verbose('Setting up fixed on element pass');
-            $module
-              .visibility({
-                once: false,
-                continuous: false,
-                onTopPassed: function() {
-                  $module
-                    .addClass(className.fixed)
-                    .css({
-                      position: 'fixed',
-                      top: settings.offset + 'px'
-                    })
-                  ;
-                  if(settings.animation && $.fn.transition !== undefined) {
-                    $module.transition(settings.transition, settings.duration);
-                  }
-                },
-                onTopPassedReverse: function() {
-                  $module
-                    .removeClass(className.fixed)
-                    .css({
-                      position: '',
-                      top: ''
-                    })
-                  ;
+            $module.visibility({
+              once: false,
+              continuous: false,
+              onTopPassed: function onTopPassed() {
+                $module.addClass(className.fixed).css({
+                  position: 'fixed',
+                  top: settings.offset + 'px'
+                });
+                if (settings.animation && $.fn.transition !== undefined) {
+                  $module.transition(settings.transition, settings.duration);
                 }
-              })
-            ;
+              },
+              onTopPassedReverse: function onTopPassedReverse() {
+                $module.removeClass(className.fixed).css({
+                  position: '',
+                  top: ''
+                });
+              }
+            });
           }
         },
 
         set: {
-          image: function(src) {
-            var
-              offScreen = (module.cache.screen.bottom < module.cache.element.top)
-            ;
-            $module
-              .attr('src', src)
-            ;
-            if(offScreen) {
-              module.verbose('Image outside browser, avoiding animation')
+          image: function image(src) {
+            var offScreen = module.cache.screen.bottom < module.cache.element.top;
+            $module.attr('src', src);
+            if (offScreen) {
+              module.verbose('Image outside browser, avoiding animation');
               $module.show();
-            }
-            else {
-              if(settings.transition && $.fn.transition !== undefined) {
+            } else {
+              if (settings.transition && $.fn.transition !== undefined) {
                 $module.transition(settings.transition, settings.duration);
-              }
-              else {
+              } else {
                 $module.fadeIn(settings.duration);
               }
             }
           }
         },
 
-        refresh: function() {
+        refresh: function refresh() {
           module.debug('Refreshing constants (element width/height)');
           module.reset();
           module.save.position();
@@ -230,15 +189,15 @@ $.fn.visibility = function(parameters) {
           $.proxy(settings.onRefresh, element)();
         },
 
-        reset: function() {
+        reset: function reset() {
           module.verbose('Reseting all cached values');
-          if( $.isPlainObject(module.cache) ) {
+          if ($.isPlainObject(module.cache)) {
             module.cache.screen = {};
             module.cache.element = {};
           }
         },
 
-        checkVisibility: function() {
+        checkVisibility: function checkVisibility() {
           module.verbose('Checking visibility of element', module.cache.element);
           module.save.scroll();
           module.save.direction();
@@ -263,264 +222,224 @@ $.fn.visibility = function(parameters) {
           module.bottomPassed();
         },
 
-        passed: function(amount, newCallback) {
-          var
-            calculations   = module.get.elementCalculations(),
-            amountInPixels
-          ;
+        passed: function passed(amount, newCallback) {
+          var calculations = module.get.elementCalculations(),
+              amountInPixels;
           // assign callback
-          if(amount !== undefined && newCallback !== undefined) {
+          if (amount !== undefined && newCallback !== undefined) {
             settings.onPassed[amount] = newCallback;
-          }
-          else if(amount !== undefined) {
-            return (module.get.pixelsPassed(amount) > calculations.pixelsPassed);
-          }
-          else if(calculations.passing) {
-            $.each(settings.onPassed, function(amount, callback) {
-              if(calculations.bottomVisible || calculations.pixelsPassed > module.get.pixelsPassed(amount)) {
+          } else if (amount !== undefined) {
+            return module.get.pixelsPassed(amount) > calculations.pixelsPassed;
+          } else if (calculations.passing) {
+            $.each(settings.onPassed, function (amount, callback) {
+              if (calculations.bottomVisible || calculations.pixelsPassed > module.get.pixelsPassed(amount)) {
                 module.execute(callback, amount);
-              }
-              else if(!settings.once) {
+              } else if (!settings.once) {
                 module.remove.occurred(callback);
               }
             });
           }
         },
 
-        passing: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onPassing,
-            callbackName = 'passing'
-          ;
-          if(newCallback) {
+        passing: function passing(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onPassing,
+              callbackName = 'passing';
+          if (newCallback) {
             module.debug('Adding callback for passing', newCallback);
             settings.onPassing = newCallback;
           }
-          if(calculations.passing) {
+          if (calculations.passing) {
             module.execute(callback, callbackName);
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback !== undefined) {
+          if (newCallback !== undefined) {
             return calculations.passing;
           }
         },
 
-
-        topVisible: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onTopVisible,
-            callbackName = 'topVisible'
-          ;
-          if(newCallback) {
+        topVisible: function topVisible(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onTopVisible,
+              callbackName = 'topVisible';
+          if (newCallback) {
             module.debug('Adding callback for top visible', newCallback);
             settings.onTopVisible = newCallback;
           }
-          if(calculations.topVisible) {
+          if (calculations.topVisible) {
             module.execute(callback, callbackName);
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback === undefined) {
+          if (newCallback === undefined) {
             return calculations.topVisible;
           }
         },
 
-        bottomVisible: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onBottomVisible,
-            callbackName = 'bottomVisible'
-          ;
-          if(newCallback) {
+        bottomVisible: function bottomVisible(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onBottomVisible,
+              callbackName = 'bottomVisible';
+          if (newCallback) {
             module.debug('Adding callback for bottom visible', newCallback);
             settings.onBottomVisible = newCallback;
           }
-          if(calculations.bottomVisible) {
+          if (calculations.bottomVisible) {
             module.execute(callback, callbackName);
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback === undefined) {
+          if (newCallback === undefined) {
             return calculations.bottomVisible;
           }
         },
 
-        topPassed: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onTopPassed,
-            callbackName = 'topPassed'
-          ;
-          if(newCallback) {
+        topPassed: function topPassed(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onTopPassed,
+              callbackName = 'topPassed';
+          if (newCallback) {
             module.debug('Adding callback for top passed', newCallback);
             settings.onTopPassed = newCallback;
           }
-          if(calculations.topPassed) {
+          if (calculations.topPassed) {
             module.execute(callback, callbackName);
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback === undefined) {
+          if (newCallback === undefined) {
             return calculations.onTopPassed;
           }
         },
 
-        bottomPassed: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onBottomPassed,
-            callbackName = 'bottomPassed'
-          ;
-          if(newCallback) {
+        bottomPassed: function bottomPassed(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onBottomPassed,
+              callbackName = 'bottomPassed';
+          if (newCallback) {
             module.debug('Adding callback for bottom passed', newCallback);
             settings.onBottomPassed = newCallback;
           }
-          if(calculations.bottomPassed) {
+          if (calculations.bottomPassed) {
             module.execute(callback, callbackName);
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback === undefined) {
+          if (newCallback === undefined) {
             return calculations.bottomPassed;
           }
         },
 
-        passingReverse: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onPassingReverse,
-            callbackName = 'passingReverse'
-          ;
-          if(newCallback) {
+        passingReverse: function passingReverse(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onPassingReverse,
+              callbackName = 'passingReverse';
+          if (newCallback) {
             module.debug('Adding callback for passing reverse', newCallback);
             settings.onPassingReverse = newCallback;
           }
-          if(!calculations.passing) {
-            if(module.get.occurred('passing')) {
+          if (!calculations.passing) {
+            if (module.get.occurred('passing')) {
               module.execute(callback, callbackName);
             }
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback !== undefined) {
+          if (newCallback !== undefined) {
             return !calculations.passing;
           }
         },
 
-
-        topVisibleReverse: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onTopVisibleReverse,
-            callbackName = 'topVisibleReverse'
-          ;
-          if(newCallback) {
+        topVisibleReverse: function topVisibleReverse(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onTopVisibleReverse,
+              callbackName = 'topVisibleReverse';
+          if (newCallback) {
             module.debug('Adding callback for top visible reverse', newCallback);
             settings.onTopVisibleReverse = newCallback;
           }
-          if(!calculations.topVisible) {
-            if(module.get.occurred('topVisible')) {
+          if (!calculations.topVisible) {
+            if (module.get.occurred('topVisible')) {
               module.execute(callback, callbackName);
             }
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback === undefined) {
+          if (newCallback === undefined) {
             return !calculations.topVisible;
           }
         },
 
-        bottomVisibleReverse: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onBottomVisibleReverse,
-            callbackName = 'bottomVisibleReverse'
-          ;
-          if(newCallback) {
+        bottomVisibleReverse: function bottomVisibleReverse(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onBottomVisibleReverse,
+              callbackName = 'bottomVisibleReverse';
+          if (newCallback) {
             module.debug('Adding callback for bottom visible reverse', newCallback);
             settings.onBottomVisibleReverse = newCallback;
           }
-          if(!calculations.bottomVisible) {
-            if(module.get.occurred('bottomVisible')) {
+          if (!calculations.bottomVisible) {
+            if (module.get.occurred('bottomVisible')) {
               module.execute(callback, callbackName);
             }
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback === undefined) {
+          if (newCallback === undefined) {
             return !calculations.bottomVisible;
           }
         },
 
-        topPassedReverse: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onTopPassedReverse,
-            callbackName = 'topPassedReverse'
-          ;
-          if(newCallback) {
+        topPassedReverse: function topPassedReverse(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onTopPassedReverse,
+              callbackName = 'topPassedReverse';
+          if (newCallback) {
             module.debug('Adding callback for top passed reverse', newCallback);
             settings.onTopPassedReverse = newCallback;
           }
-          if(!calculations.topPassed) {
-            if(module.get.occurred('topPassed')) {
+          if (!calculations.topPassed) {
+            if (module.get.occurred('topPassed')) {
               module.execute(callback, callbackName);
             }
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback === undefined) {
+          if (newCallback === undefined) {
             return !calculations.onTopPassed;
           }
         },
 
-        bottomPassedReverse: function(newCallback) {
-          var
-            calculations = module.get.elementCalculations(),
-            callback     = newCallback || settings.onBottomPassedReverse,
-            callbackName = 'bottomPassedReverse'
-          ;
-          if(newCallback) {
+        bottomPassedReverse: function bottomPassedReverse(newCallback) {
+          var calculations = module.get.elementCalculations(),
+              callback = newCallback || settings.onBottomPassedReverse,
+              callbackName = 'bottomPassedReverse';
+          if (newCallback) {
             module.debug('Adding callback for bottom passed reverse', newCallback);
             settings.onBottomPassedReverse = newCallback;
           }
-          if(!calculations.bottomPassed) {
-            if(module.get.occurred('bottomPassed')) {
+          if (!calculations.bottomPassed) {
+            if (module.get.occurred('bottomPassed')) {
               module.execute(callback, callbackName);
             }
-          }
-          else if(!settings.once) {
+          } else if (!settings.once) {
             module.remove.occurred(callbackName);
           }
-          if(newCallback === undefined) {
+          if (newCallback === undefined) {
             return !calculations.bottomPassed;
           }
         },
 
-        execute: function(callback, callbackName) {
-          var
-            calculations = module.get.elementCalculations(),
-            screen       = module.get.screenCalculations()
-          ;
-          callback     = callback || false;
-          if(callback) {
-            if(settings.continuous) {
+        execute: function execute(callback, callbackName) {
+          var calculations = module.get.elementCalculations(),
+              screen = module.get.screenCalculations();
+          callback = callback || false;
+          if (callback) {
+            if (settings.continuous) {
               module.debug('Callback being called continuously', callbackName, calculations);
               $.proxy(callback, element)(calculations, screen);
-            }
-            else if(!module.get.occurred(callbackName)) {
+            } else if (!module.get.occurred(callbackName)) {
               module.debug('Conditions met', callbackName, calculations);
               $.proxy(callback, element)(calculations, screen);
             }
@@ -529,185 +448,168 @@ $.fn.visibility = function(parameters) {
         },
 
         remove: {
-          occurred: function(callback) {
-            if(callback) {
-              if(module.cache.occurred[callback] !== undefined && module.cache.occurred[callback] === true) {
+          occurred: function occurred(callback) {
+            if (callback) {
+              if (module.cache.occurred[callback] !== undefined && module.cache.occurred[callback] === true) {
                 module.debug('Callback can now be called again', callback);
                 module.cache.occurred[callback] = false;
               }
-            }
-            else {
+            } else {
               module.cache.occurred = {};
             }
           }
         },
 
         save: {
-          occurred: function(callback) {
-            if(callback) {
-              if(module.cache.occurred[callback] === undefined || (module.cache.occurred[callback] !== true)) {
+          occurred: function occurred(callback) {
+            if (callback) {
+              if (module.cache.occurred[callback] === undefined || module.cache.occurred[callback] !== true) {
                 module.verbose('Saving callback occurred', callback);
                 module.cache.occurred[callback] = true;
               }
             }
           },
-          scroll: function() {
+          scroll: function scroll() {
             module.cache.scroll = $context.scrollTop() + settings.offset;
           },
-          direction: function() {
-            var
-              scroll     = module.get.scroll(),
-              lastScroll = module.get.lastScroll(),
-              direction
-            ;
-            if(scroll > lastScroll && lastScroll) {
+          direction: function direction() {
+            var scroll = module.get.scroll(),
+                lastScroll = module.get.lastScroll(),
+                direction;
+            if (scroll > lastScroll && lastScroll) {
               direction = 'down';
-            }
-            else if(scroll < lastScroll && lastScroll) {
+            } else if (scroll < lastScroll && lastScroll) {
               direction = 'up';
-            }
-            else {
+            } else {
               direction = 'static';
             }
             module.cache.direction = direction;
             return module.cache.direction;
           },
-          elementPosition: function() {
-            var
-              screen = module.get.screenSize()
-            ;
+          elementPosition: function elementPosition() {
+            var screen = module.get.screenSize();
             module.verbose('Saving element position');
             $.extend(module.cache.element, {
-              margin : {
-                top    : parseInt($module.css('margin-top'), 10),
-                bottom : parseInt($module.css('margin-bottom'), 10)
+              margin: {
+                top: parseInt($module.css('margin-top'), 10),
+                bottom: parseInt($module.css('margin-bottom'), 10)
               },
-              fits   : (element.height < screen.height),
-              offset : $module.offset(),
-              width  : $module.outerWidth(),
-              height : $module.outerHeight()
+              fits: element.height < screen.height,
+              offset: $module.offset(),
+              width: $module.outerWidth(),
+              height: $module.outerHeight()
             });
             return module.cache.element;
           },
-          elementCalculations: function() {
-            var
-              screen  = module.get.screenCalculations(),
-              element = module.get.elementPosition()
-            ;
+          elementCalculations: function elementCalculations() {
+            var screen = module.get.screenCalculations(),
+                element = module.get.elementPosition();
             // offset
-            if(settings.includeMargin) {
+            if (settings.includeMargin) {
               $.extend(module.cache.element, {
-                top    : element.offset.top - element.margin.top,
-                bottom : element.offset.top + element.height + element.margin.bottom
+                top: element.offset.top - element.margin.top,
+                bottom: element.offset.top + element.height + element.margin.bottom
               });
-            }
-            else {
+            } else {
               $.extend(module.cache.element, {
-                top    : element.offset.top,
-                bottom : element.offset.top + element.height
+                top: element.offset.top,
+                bottom: element.offset.top + element.height
               });
             }
             // visibility
             $.extend(module.cache.element, {
-              topVisible       : (screen.bottom >= element.top),
-              topPassed        : (screen.top >= element.top),
-              bottomVisible    : (screen.bottom >= element.bottom),
-              bottomPassed     : (screen.top >= element.bottom),
-              pixelsPassed     : 0,
-              percentagePassed : 0
+              topVisible: screen.bottom >= element.top,
+              topPassed: screen.top >= element.top,
+              bottomVisible: screen.bottom >= element.bottom,
+              bottomPassed: screen.top >= element.bottom,
+              pixelsPassed: 0,
+              percentagePassed: 0
             });
             // meta calculations
             $.extend(module.cache.element, {
-              visible : (module.cache.element.topVisible || module.cache.element.bottomVisible),
-              passing : (module.cache.element.topPassed && !module.cache.element.bottomPassed),
-              hidden  : (!module.cache.element.topVisible && !module.cache.element.bottomVisible)
+              visible: module.cache.element.topVisible || module.cache.element.bottomVisible,
+              passing: module.cache.element.topPassed && !module.cache.element.bottomPassed,
+              hidden: !module.cache.element.topVisible && !module.cache.element.bottomVisible
             });
-            if(module.cache.element.passing) {
-              module.cache.element.pixelsPassed = (screen.top - element.top);
+            if (module.cache.element.passing) {
+              module.cache.element.pixelsPassed = screen.top - element.top;
               module.cache.element.percentagePassed = (screen.top - element.top) / element.height;
             }
             module.verbose('Updated element calculations', module.cache.element);
           },
-          screenCalculations: function() {
-            var
-              scroll = $context.scrollTop() + settings.offset
-            ;
-            if(module.cache.scroll === undefined) {
+          screenCalculations: function screenCalculations() {
+            var scroll = $context.scrollTop() + settings.offset;
+            if (module.cache.scroll === undefined) {
               module.cache.scroll = $context.scrollTop() + settings.offset;
             }
             module.save.direction();
             $.extend(module.cache.screen, {
-              top    : scroll,
-              bottom : scroll + module.cache.screen.height
+              top: scroll,
+              bottom: scroll + module.cache.screen.height
             });
             return module.cache.screen;
           },
-          screenSize: function() {
+          screenSize: function screenSize() {
             module.verbose('Saving window position');
             module.cache.screen = {
               height: $context.height()
             };
           },
-          position: function() {
+          position: function position() {
             module.save.screenSize();
             module.save.elementPosition();
           }
         },
 
         get: {
-          pixelsPassed: function(amount) {
-            var
-              element = module.get.elementCalculations()
-            ;
-            if(amount.search('%') > -1) {
-              return ( element.height * (parseInt(amount, 10) / 100) );
+          pixelsPassed: function pixelsPassed(amount) {
+            var element = module.get.elementCalculations();
+            if (amount.search('%') > -1) {
+              return element.height * (parseInt(amount, 10) / 100);
             }
             return parseInt(amount, 10);
           },
-          occurred: function(callback) {
-            return (module.cache.occurred !== undefined)
-              ? module.cache.occurred[callback] || false
-              : false
-            ;
+          occurred: function occurred(callback) {
+            return module.cache.occurred !== undefined ? module.cache.occurred[callback] || false : false;
           },
-          direction: function() {
-            if(module.cache.direction === undefined) {
+          direction: function direction() {
+            if (module.cache.direction === undefined) {
               module.save.direction();
             }
             return module.cache.direction;
           },
-          elementPosition: function() {
-            if(module.cache.element === undefined) {
+          elementPosition: function elementPosition() {
+            if (module.cache.element === undefined) {
               module.save.elementPosition();
             }
             return module.cache.element;
           },
-          elementCalculations: function() {
-            if(module.cache.element === undefined) {
+          elementCalculations: function elementCalculations() {
+            if (module.cache.element === undefined) {
               module.save.elementCalculations();
             }
             return module.cache.element;
           },
-          screenCalculations: function() {
-            if(module.cache.screen === undefined) {
+          screenCalculations: function screenCalculations() {
+            if (module.cache.screen === undefined) {
               module.save.screenCalculations();
             }
             return module.cache.screen;
           },
-          screenSize: function() {
-            if(module.cache.screen === undefined) {
+          screenSize: function screenSize() {
+            if (module.cache.screen === undefined) {
               module.save.screenSize();
             }
             return module.cache.screen;
           },
-          scroll: function() {
-            if(module.cache.scroll === undefined) {
+          scroll: function scroll() {
+            if (module.cache.scroll === undefined) {
               module.save.scroll();
             }
             return module.cache.scroll;
           },
-          lastScroll: function() {
-            if(module.cache.screen === undefined) {
+          lastScroll: function lastScroll() {
+            if (module.cache.screen === undefined) {
               module.debug('First scroll event, no last scroll could be found');
               return false;
             }
@@ -715,98 +617,85 @@ $.fn.visibility = function(parameters) {
           }
         },
 
-        setting: function(name, value) {
-          if( $.isPlainObject(name) ) {
+        setting: function setting(name, value) {
+          if ($.isPlainObject(name)) {
             $.extend(true, settings, name);
-          }
-          else if(value !== undefined) {
+          } else if (value !== undefined) {
             settings[name] = value;
-          }
-          else {
+          } else {
             return settings[name];
           }
         },
-        internal: function(name, value) {
-          if( $.isPlainObject(name) ) {
+        internal: function internal(name, value) {
+          if ($.isPlainObject(name)) {
             $.extend(true, module, name);
-          }
-          else if(value !== undefined) {
+          } else if (value !== undefined) {
             module[name] = value;
-          }
-          else {
+          } else {
             return module[name];
           }
         },
-        debug: function() {
-          if(settings.debug) {
-            if(settings.performance) {
+        debug: function debug() {
+          if (settings.debug) {
+            if (settings.performance) {
               module.performance.log(arguments);
-            }
-            else {
+            } else {
               module.debug = Function.prototype.bind.call(console.info, console, settings.name + ':');
               module.debug.apply(console, arguments);
             }
           }
         },
-        verbose: function() {
-          if(settings.verbose && settings.debug) {
-            if(settings.performance) {
+        verbose: function verbose() {
+          if (settings.verbose && settings.debug) {
+            if (settings.performance) {
               module.performance.log(arguments);
-            }
-            else {
+            } else {
               module.verbose = Function.prototype.bind.call(console.info, console, settings.name + ':');
               module.verbose.apply(console, arguments);
             }
           }
         },
-        error: function() {
+        error: function error() {
           module.error = Function.prototype.bind.call(console.error, console, settings.name + ':');
           module.error.apply(console, arguments);
         },
         performance: {
-          log: function(message) {
-            var
-              currentTime,
-              executionTime,
-              previousTime
-            ;
-            if(settings.performance) {
-              currentTime   = new Date().getTime();
-              previousTime  = time || currentTime;
+          log: function log(message) {
+            var currentTime, executionTime, previousTime;
+            if (settings.performance) {
+              currentTime = new Date().getTime();
+              previousTime = time || currentTime;
               executionTime = currentTime - previousTime;
-              time          = currentTime;
+              time = currentTime;
               performance.push({
-                'Name'           : message[0],
-                'Arguments'      : [].slice.call(message, 1) || '',
-                'Element'        : element,
-                'Execution Time' : executionTime
+                'Name': message[0],
+                'Arguments': [].slice.call(message, 1) || '',
+                'Element': element,
+                'Execution Time': executionTime
               });
             }
             clearTimeout(module.performance.timer);
             module.performance.timer = setTimeout(module.performance.display, 100);
           },
-          display: function() {
-            var
-              title = settings.name + ':',
-              totalTime = 0
-            ;
+          display: function display() {
+            var title = settings.name + ':',
+                totalTime = 0;
             time = false;
             clearTimeout(module.performance.timer);
-            $.each(performance, function(index, data) {
+            $.each(performance, function (index, data) {
               totalTime += data['Execution Time'];
             });
             title += ' ' + totalTime + 'ms';
-            if(moduleSelector) {
+            if (moduleSelector) {
               title += ' \'' + moduleSelector + '\'';
             }
-            if( (console.group !== undefined || console.table !== undefined) && performance.length > 0) {
+            if ((console.group !== undefined || console.table !== undefined) && performance.length > 0) {
               console.groupCollapsed(title);
-              if(console.table) {
+              if (console.table) {
                 console.table(performance);
-              }
-              else {
-                $.each(performance, function(index, data) {
-                  console.log(data['Name'] + ': ' + data['Execution Time']+'ms');
+              } else {
+                $.each(performance, function (index, data) {
+                  console.log(data['Name'] + ': ' + data['Execution Time'] + 'ms');
                 });
               }
               console.groupEnd();
@@ -814,138 +703,120 @@ $.fn.visibility = function(parameters) {
             performance = [];
           }
         },
-        invoke: function(query, passedArguments, context) {
-          var
-            object = instance,
-            maxDepth,
-            found,
-            response
-          ;
+        invoke: function invoke(query, passedArguments, context) {
+          var object = instance,
+              maxDepth,
+              found,
+              response;
           passedArguments = passedArguments || queryArguments;
-          context         = element         || context;
-          if(typeof query == 'string' && object !== undefined) {
-            query    = query.split(/[\. ]/);
+          context = element || context;
+          if (typeof query == 'string' && object !== undefined) {
+            query = query.split(/[\. ]/);
             maxDepth = query.length - 1;
-            $.each(query, function(depth, value) {
-              var camelCaseValue = (depth != maxDepth)
-                ? value + query[depth + 1].charAt(0).toUpperCase() + query[depth + 1].slice(1)
-                : query
-              ;
-              if( $.isPlainObject( object[camelCaseValue] ) && (depth != maxDepth) ) {
+            $.each(query, function (depth, value) {
+              var camelCaseValue = depth != maxDepth ? value + query[depth + 1].charAt(0).toUpperCase() + query[depth + 1].slice(1) : query;
+              if ($.isPlainObject(object[camelCaseValue]) && depth != maxDepth) {
                 object = object[camelCaseValue];
-              }
-              else if( object[camelCaseValue] !== undefined ) {
+              } else if (object[camelCaseValue] !== undefined) {
                 found = object[camelCaseValue];
                 return false;
-              }
-              else if( $.isPlainObject( object[value] ) && (depth != maxDepth) ) {
+              } else if ($.isPlainObject(object[value]) && depth != maxDepth) {
                 object = object[value];
-              }
-              else if( object[value] !== undefined ) {
+              } else if (object[value] !== undefined) {
                 found = object[value];
                 return false;
-              }
-              else {
+              } else {
                 return false;
               }
             });
           }
-          if ( $.isFunction( found ) ) {
+          if ($.isFunction(found)) {
             response = found.apply(context, passedArguments);
-          }
-          else if(found !== undefined) {
+          } else if (found !== undefined) {
             response = found;
           }
-          if($.isArray(returnedValue)) {
+          if ($.isArray(returnedValue)) {
             returnedValue.push(response);
-          }
-          else if(returnedValue !== undefined) {
+          } else if (returnedValue !== undefined) {
             returnedValue = [returnedValue, response];
-          }
-          else if(response !== undefined) {
+          } else if (response !== undefined) {
             returnedValue = response;
           }
           return found;
         }
       };
 
-      if(methodInvoked) {
-        if(instance === undefined) {
+      if (methodInvoked) {
+        if (instance === undefined) {
           module.initialize();
         }
         module.invoke(query);
-      }
-      else {
-        if(instance !== undefined) {
+      } else {
+        if (instance !== undefined) {
           module.destroy();
         }
         module.initialize();
       }
-    })
-  ;
+    });
 
-  return (returnedValue !== undefined)
-    ? returnedValue
-    : this
-  ;
-};
+    return returnedValue !== undefined ? returnedValue : this;
+  };
 
-$.fn.visibility.settings = {
+  $.fn.visibility.settings = {
 
-  name                   : 'Visibility',
-  namespace              : 'visibility',
+    name: 'Visibility',
+    namespace: 'visibility',
 
-  className: {
-    fixed: 'fixed'
-  },
+    className: {
+      fixed: 'fixed'
+    },
 
-  debug                  : false,
-  verbose                : false,
-  performance            : true,
+    debug: false,
+    verbose: false,
+    performance: true,
 
-  offset                 : 0,
-  includeMargin          : false,
+    offset: 0,
+    includeMargin: false,
 
-  context                : window,
+    context: window,
 
-  // visibility check delay in ms (defaults to animationFrame)
-  throttle               : false,
+    // visibility check delay in ms (defaults to animationFrame)
+    throttle: false,
 
-  // special visibility type (image, fixed)
-  type                   : false,
+    // special visibility type (image, fixed)
+    type: false,
 
-  // image only settings
-  transition             : false,
-  duration               : 500,
+    // image only settings
+    transition: false,
+    duration: 500,
 
-  // array of callbacks for percentage
-  onPassed               : {},
+    // array of callbacks for percentage
+    onPassed: {},
 
-  // standard callbacks
-  onPassing              : false,
-  onTopVisible           : false,
-  onBottomVisible        : false,
-  onTopPassed            : false,
-  onBottomPassed         : false,
+    // standard callbacks
+    onPassing: false,
+    onTopVisible: false,
+    onBottomVisible: false,
+    onTopPassed: false,
+    onBottomPassed: false,
 
-  // reverse callbacks
-  onPassingReverse       : false,
-  onTopVisibleReverse    : false,
-  onBottomVisibleReverse : false,
-  onTopPassedReverse     : false,
-  onBottomPassedReverse  : false,
+    // reverse callbacks
+    onPassingReverse: false,
+    onTopVisibleReverse: false,
+    onBottomVisibleReverse: false,
+    onTopPassedReverse: false,
+    onBottomPassedReverse: false,
 
-  once                   : true,
-  continuous             : false,
+    once: true,
+    continuous: false,
 
-  // utility callbacks
-  onRefresh              : function(){},
-  onScroll               : function(){},
+    // utility callbacks
+    onRefresh: function onRefresh() {},
+    onScroll: function onScroll() {},
 
-  error : {
-    method   : 'The method you called is not defined.'
-  }
+    error: {
+      method: 'The method you called is not defined.'
+    }
 
-};
-
-})( jQuery, window , document );
+  };
+})(jQuery, window, document);

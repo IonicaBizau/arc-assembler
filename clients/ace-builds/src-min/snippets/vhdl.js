@@ -1,1 +1,6 @@
-define("ace/snippets/vhdl",["require","exports","module"],function(e,t,n){"use strict";t.snippetText=undefined,t.scope="vhdl"})
+"use strict";
+
+define("ace/snippets/vhdl", ["require", "exports", "module"], function (e, t, n) {
+  "use strict";
+  t.snippetText = undefined, t.scope = "vhdl";
+});

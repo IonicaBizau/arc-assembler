@@ -1,80 +1,78 @@
+"use strict";
+
 var Util = require("arc-util");
 var mnemonics = {
 
     // Memory
     "ld": {
         type: "memory"
-    }
-  , "st": {
+    },
+    "st": {
         type: "memory"
-    }
 
-    // Output
-    // TODO They have the memory format.
-  , "printn": {
+        // Output
+        // TODO They have the memory format.
+    }, "printn": {
         type: "memory"
-    }
-  , "printc": {
+    },
+    "printc": {
         type: "memory"
-    }
 
-    // SETHI/BRANCH
-  , "sethi": {
+        // SETHI/BRANCH
+    }, "sethi": {
         type: "sethi"
-    }
-  , "branch": {
+    },
+    "branch": {
         type: "branch"
-    }
+    },
 
-  , "be": {
+    "be": {
         type: "branch"
-    }
-  , "bcs": {
+    },
+    "bcs": {
         type: "branch"
-    }
-  , "bneg": {
+    },
+    "bneg": {
         type: "branch"
-    }
-  , "bvs": {
+    },
+    "bvs": {
         type: "branch"
-    }
-  , "ba": {
+    },
+    "ba": {
         type: "branch"
-    }
 
-    // Call format
-  , "call": {
+        // Call format
+    }, "call": {
         type: "control"
-    }
 
-    // Arithmetic
-  , "addcc": {
+        // Arithmetic
+    }, "addcc": {
         type: "arithmetic"
-    }
-  , "andcc": {
+    },
+    "andcc": {
         type: "arithmetic"
-    }
-  , "andncc": {
+    },
+    "andncc": {
         type: "arithmetic"
-    }
-  , "orcc": {
+    },
+    "orcc": {
         type: "arithmetic"
-    }
-  , "xorcc": {
+    },
+    "xorcc": {
         type: "arithmetic"
-    }
-  , "orncc": {
+    },
+    "orncc": {
         type: "arithmetic"
-    }
-  , "srl": {
+    },
+    "srl": {
         type: "arithmetic"
-    }
-  , "jmpl": {
+    },
+    "jmpl": {
         type: "arithmetic"
     }
 };
 
-const ALL_MNEMONICS = "\\b(?:" + Object.keys(mnemonics).join("|") + ")\\b";
+var ALL_MNEMONICS = "\\b(?:" + Object.keys(mnemonics).join("|") + ")\\b";
 
 /**
  * parse
@@ -94,10 +92,10 @@ const ALL_MNEMONICS = "\\b(?:" + Object.keys(mnemonics).join("|") + ")\\b";
 function parse(lines) {
 
     var result = {
-        lines: []
-      , addresses: {}
-      , _cAddress: 0
-      , verbose: ""
+        lines: [],
+        addresses: {},
+        _cAddress: 0,
+        verbose: ""
     };
 
     var lastLabel = null;
@@ -108,29 +106,31 @@ function parse(lines) {
         var c = lines[i];
         c = c.replace(/\!.*$/g, "");
 
-        var op = ((c.match(/\.([a-z]+)/) || [])[1] || "").trim()
-          , label = ((c.match(/^([a-z,_]+):\ /i) || [])[1] || "").trim()
-          , instruction = null
-          , iArgs = []
-          , oArgs = []
-          , lValue = ""
-          , cLine = {}
-          ;
+        var op = ((c.match(/\.([a-z]+)/) || [])[1] || "").trim(),
+            label = ((c.match(/^([a-z,_]+):\ /i) || [])[1] || "").trim(),
+            instruction = null,
+            iArgs = [],
+            oArgs = [],
+            lValue = "",
+            cLine = {};
 
         label = label || lastLabel;
 
         if (new RegExp(ALL_MNEMONICS).test(c)) {
             var m = c.match(new RegExp("(" + ALL_MNEMONICS + ")( (.*))?")) || [];
             instruction = m[1];
-            iArgs = (m[2] || "").split(/[ ,]+/).filter(function (c) { return c; });
+            iArgs = (m[2] || "").split(/[ ,]+/).filter(function (c) {
+                return c;
+            });
         }
-
 
         if (op) {
             lValue = "";
             lastLabel = "";
             label = "";
-            oArgs = c.replace("." + op, "").split(/[ ,]+/).filter(function (c) { return c; });
+            oArgs = c.replace("." + op, "").split(/[ ,]+/).filter(function (c) {
+                return c;
+            });
         }
 
         if (op || label || instruction) {
@@ -140,7 +140,6 @@ function parse(lines) {
         if (op) {
             result.verbose += "  > Pseudo ops: " + op;
         }
-
 
         if (oArgs.length) {
             result.verbose += "  > Operator Args: " + JSON.stringify(oArgs);
@@ -192,7 +191,7 @@ function parse(lines) {
                 if (!mnemonics[instruction]) {
                     throw new Error("Invalid instruction: " + instruction);
                 }
-                cLine.type = mnemonics[instruction].type
+                cLine.type = mnemonics[instruction].type;
             }
 
             // Pseudo operation: org

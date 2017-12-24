@@ -1,52 +1,52 @@
-define("ace/ext/linking",["require","exports","module","ace/editor","ace/config"], function(require, exports, module) {
+"use strict";
 
-var Editor = require("ace/editor").Editor;
+define("ace/ext/linking", ["require", "exports", "module", "ace/editor", "ace/config"], function (require, exports, module) {
 
-require("../config").defineOptions(Editor.prototype, "editor", {
-    enableLinking: {
-        set: function(val) {
-            if (val) {
-                this.on("click", onClick);
-                this.on("mousemove", onMouseMove);
-            } else {
-                this.off("click", onClick);
-                this.off("mousemove", onMouseMove);
-            }
-        },
-        value: false
-    }
-})
+    var Editor = require("ace/editor").Editor;
 
-function onMouseMove(e) {
-    var editor = e.editor;
-    var ctrl = e.getAccelKey();
+    require("../config").defineOptions(Editor.prototype, "editor", {
+        enableLinking: {
+            set: function set(val) {
+                if (val) {
+                    this.on("click", onClick);
+                    this.on("mousemove", onMouseMove);
+                } else {
+                    this.off("click", onClick);
+                    this.off("mousemove", onMouseMove);
+                }
+            },
+            value: false
+        }
+    });
 
-    if (ctrl) {
+    function onMouseMove(e) {
         var editor = e.editor;
-        var docPos = e.getDocumentPosition();
-        var session = editor.session;
-        var token = session.getTokenAt(docPos.row, docPos.column);
+        var ctrl = e.getAccelKey();
 
-        editor._emit("linkHover", {position: docPos, token: token});
+        if (ctrl) {
+            var editor = e.editor;
+            var docPos = e.getDocumentPosition();
+            var session = editor.session;
+            var token = session.getTokenAt(docPos.row, docPos.column);
+
+            editor._emit("linkHover", { position: docPos, token: token });
+        }
     }
-}
 
-function onClick(e) {
-    var ctrl = e.getAccelKey();
-    var button = e.getButton();
+    function onClick(e) {
+        var ctrl = e.getAccelKey();
+        var button = e.getButton();
 
-    if (button == 0 && ctrl) {
-        var editor = e.editor;
-        var docPos = e.getDocumentPosition();
-        var session = editor.session;
-        var token = session.getTokenAt(docPos.row, docPos.column);
+        if (button == 0 && ctrl) {
+            var editor = e.editor;
+            var docPos = e.getDocumentPosition();
+            var session = editor.session;
+            var token = session.getTokenAt(docPos.row, docPos.column);
 
-        editor._emit("linkClick", {position: docPos, token: token});
+            editor._emit("linkClick", { position: docPos, token: token });
+        }
     }
-}
-
 });
-                (function() {
-                    window.require(["ace/ext/linking"], function() {});
-                })();
-            
+(function () {
+    window.require(["ace/ext/linking"], function () {});
+})();

@@ -1,8 +1,10 @@
-define("ace/theme/merbivore",["require","exports","module","ace/lib/dom"], function(require, exports, module) {
+"use strict";
 
-exports.isDark = true;
-exports.cssClass = "ace-merbivore";
-exports.cssText = ".ace-merbivore .ace_gutter {\
+define("ace/theme/merbivore", ["require", "exports", "module", "ace/lib/dom"], function (require, exports, module) {
+
+  exports.isDark = true;
+  exports.cssClass = "ace-merbivore";
+  exports.cssText = ".ace-merbivore .ace_gutter {\
 background: #202020;\
 color: #E6E1DC\
 }\
@@ -91,6 +93,6 @@ color: #FFFF89\
 background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWMQFxf3ZXB1df0PAAdsAmERTkEHAAAAAElFTkSuQmCC) right repeat-y\
 }";
 
-var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass);
+  var dom = require("../lib/dom");
+  dom.importCssString(exports.cssText, exports.cssClass);
 });
